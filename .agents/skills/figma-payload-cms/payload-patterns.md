@@ -27,19 +27,25 @@ Create in `src/fields/` as needed:
 
 | Factory | Use |
 |---------|-----|
-| `sectionHeader` | eyebrow, heading, description, align |
+| `sectionHeader` | section label (optional), heading, description, align |
+| `themeColorField` | semantic color select → CSS variables (never hex text) |
 | `iconPicker` | icon select |
 | `ctaButton` | button variants + fullWidth |
-| `anchorId` | in-page nav `#id` |
+| `link` | internal page first, external URL second — see [editor-experience.md](editor-experience.md) |
 
-Names and variants are **design-specific** — define in page plan.
+In-page section anchors: [section-anchors.md](section-anchors.md) — `src/constants/sectionAnchors.ts`, not CMS fields.
+
+Names and variants are **design-specific** — define in page plan and editor glossary.
 
 ## Seed checklist
 
 - [ ] Clear step resets **all** new global fields
 - [ ] Updates pass `req` + `disableRevalidate` when hooks require it
 - [ ] Layout block order matches Figma top→bottom
-- [ ] Hero type matches new variant
+- [ ] Hero type matches new variant; **all field names match current schema** (e.g. `imageFrameColor`, not removed fields like `backgroundColor`)
+- [ ] **Re-run `pnpm seed` after any schema rename or field type change** so the admin and frontend stay in sync
+- [ ] Page links in seed use `pageLink()` (internal reference); hash anchors use `sectionAnchorHref()` — see [section-anchors.md](section-anchors.md) + `linkHelpers.ts`
+- [ ] Create referenced pages **before** pages that link to them (e.g. contact page before home CTAs)
 - [ ] CLI seed documented in project config
 
 ## Frontend conventions

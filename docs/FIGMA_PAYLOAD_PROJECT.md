@@ -53,6 +53,34 @@
 
 File: `src/app/(frontend)/globals.css`
 
+## Editor labels (admin UI)
+
+| Code slug | Editor label | Purpose |
+|-----------|--------------|---------|
+| `logoCloud` | Partner Logos | Client/partner logo strip |
+| `benefits` | Benefits | Icon grid of product benefits |
+| `featureSplit` | Features | Numbered list + image |
+| `comparisonTable` | Feature Comparison | Spec/plan comparison table |
+| `testimonial` | Testimonial | Customer quote |
+| `processSteps` | How It Works | Numbered process steps |
+| `mediaHero` | Image Highlight | Full-width image section |
+| `ctaCentered` | Call to Action | Centered CTA block |
+
+Field rules: semantic colors (`themeColorField`), section label not "eyebrow", internal links first. See `.agents/skills/figma-payload-cms/editor-experience.md`.
+
+## Section anchors (in-page nav)
+
+Path: `src/constants/sectionAnchors.ts` — see [section-anchors.md](../.agents/skills/figma-payload-cms/section-anchors.md)
+
+| Block slug | HTML `id` | Nav label |
+|------------|-----------|-----------|
+| `benefits` | `benefits` | Benefits |
+| `comparisonTable` | `specifications` | Specifications |
+| `processSteps` | `how-to` | How-to |
+| `ctaCentered` | `contact` | Contact |
+
+Hash links in seed: `sectionAnchorHref()`. Full pages: `pageLink()`. No CMS "Section ID" field.
+
 ## Visual QA
 
 | Field | Value |
@@ -74,8 +102,11 @@ File: `src/app/(frontend)/globals.css`
 |---------|---------|
 | `pnpm dev` | Dev server |
 | `pnpm seed` | Seed CMS |
+| `pnpm seed:fresh` | Delete SQLite DB + seed (after schema field changes) |
 | `pnpm test:e2e` | E2E |
 | `pnpm test:visual` | Visual regression |
+
+Playwright skill: `~/.cursor/skills/playwright/SKILL.md` · Workflow: `.agents/skills/figma-payload-cms/playwright-qa.md`
 
 ## Adapter
 

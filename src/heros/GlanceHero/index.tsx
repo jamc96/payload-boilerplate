@@ -2,11 +2,15 @@ import React from 'react'
 
 import type { Page } from '@/payload-types'
 
+import { cn } from '@/utilities/ui'
+
 import { GlanceSection } from '@/components/GlanceSection'
 import { Media } from '@/components/Media'
+import { themeColorClassMap, type ThemeColorValue } from '@/fields/themeColor'
 
-export const GlanceHero: React.FC<Page['hero']> = ({ backgroundColor, headline, media }) => {
-  const barColor = backgroundColor || '#8E9C78'
+export const GlanceHero: React.FC<Page['hero']> = ({ headline, imageFrameColor, media }) => {
+  const frameColorKey = (imageFrameColor as ThemeColorValue | null | undefined) ?? 'midGreen'
+  const frameColorClass = themeColorClassMap[frameColorKey] ?? themeColorClassMap.midGreen
 
   return (
     <section className="bg-glance-bg max-md:pt-[120px]" data-testid="glance-hero" data-theme="light">
@@ -17,7 +21,7 @@ export const GlanceHero: React.FC<Page['hero']> = ({ backgroundColor, headline, 
           </h1>
         )}
         {media && typeof media === 'object' && (
-          <div className="overflow-hidden rounded-[30px]" style={{ backgroundColor: barColor }}>
+          <div className={cn('overflow-hidden rounded-[30px]', frameColorClass)}>
             <div className="relative w-full">
               <Media
                 className="relative w-full"

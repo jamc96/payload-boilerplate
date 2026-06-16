@@ -29,4 +29,7 @@ export const Testimonial: Block = {
     plural: 'Testimonials',
     singular: 'Testimonial',
   },
+  admin: {
+    description: 'Customer quote with photo, name, and role.',
+  },
 }

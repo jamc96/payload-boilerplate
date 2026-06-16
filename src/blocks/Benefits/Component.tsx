@@ -6,9 +6,9 @@ import { GlanceSection } from '@/components/GlanceSection'
 import { Icon } from '@/components/Icon'
 import { Media } from '@/components/Media'
 import { SectionHeader } from '@/components/SectionHeader'
+import { SECTION_ANCHORS } from '@/constants/sectionAnchors'
 
 export const BenefitsBlock: React.FC<BenefitsBlockProps> = ({
-  anchorId,
   image,
   items,
   sectionHeader,
@@ -17,7 +17,7 @@ export const BenefitsBlock: React.FC<BenefitsBlockProps> = ({
     <section
       className="bg-glance-bg pb-[120px]"
       data-testid="block-benefits"
-      id={anchorId || undefined}
+      id={SECTION_ANCHORS.benefits}
     >
       <GlanceSection as="div" className="flex flex-col">
         <div className="flex flex-col gap-[50px] border-t border-glance-divider pb-[60px] pt-20">

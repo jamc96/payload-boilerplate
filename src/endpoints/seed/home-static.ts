@@ -8,7 +8,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   hero: {
     type: 'glanceHero',
     headline: 'Browse everything.',
-    backgroundColor: '#8E9C78',
+    imageFrameColor: 'midGreen',
   },
   layout: [],
   meta: {

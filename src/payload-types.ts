@@ -178,6 +178,9 @@ export interface Page {
     } | null;
     links?:
       | {
+          /**
+           * Prefer linking to a page on this site. Use an external URL only for off-site links.
+           */
           link: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
@@ -201,7 +204,10 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
-    backgroundColor?: string | null;
+    /**
+     * Background color behind the hero image. Colors are set in the site theme.
+     */
+    imageFrameColor?: ('midGreen' | 'primary' | 'primaryLight') | null;
   };
   layout: (
     | CallToActionBlock
@@ -477,6 +483,9 @@ export interface CallToActionBlock {
   } | null;
   links?:
     | {
+        /**
+         * Prefer linking to a page on this site. Use an external URL only for off-site links.
+         */
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -527,6 +536,9 @@ export interface ContentBlock {
           [k: string]: unknown;
         } | null;
         enableLink?: boolean | null;
+        /**
+         * Prefer linking to a page on this site. Use an external URL only for off-site links.
+         */
         link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -810,10 +822,6 @@ export interface LogoCloudBlock {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
-   */
-  anchorId?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'logoCloud';
@@ -824,6 +832,9 @@ export interface LogoCloudBlock {
  */
 export interface BenefitsBlock {
   sectionHeader: {
+    /**
+     * Small text above the main heading (e.g. "Benefits"). Leave blank if this section does not use one.
+     */
     eyebrow?: string | null;
     heading: string;
     description?: string | null;
@@ -838,10 +849,6 @@ export interface BenefitsBlock {
       }[]
     | null;
   image: number | Media;
-  /**
-   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
-   */
-  anchorId?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'benefits';
@@ -852,6 +859,9 @@ export interface BenefitsBlock {
  */
 export interface FeatureSplitBlock {
   sectionHeader: {
+    /**
+     * Small text above the main heading (e.g. "Benefits"). Leave blank if this section does not use one.
+     */
     eyebrow?: string | null;
     heading: string;
     description?: string | null;
@@ -864,6 +874,9 @@ export interface FeatureSplitBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Prefer linking to a page on this site. Use an external URL only for off-site links.
+   */
   cta: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -895,11 +908,17 @@ export interface FeatureSplitBlock {
  */
 export interface ComparisonTableBlock {
   sectionHeader: {
+    /**
+     * Small text above the main heading (e.g. "Benefits"). Leave blank if this section does not use one.
+     */
     eyebrow?: string | null;
     heading: string;
     description?: string | null;
     align?: ('left' | 'center') | null;
   };
+  /**
+   * Prefer linking to a page on this site. Use an external URL only for off-site links.
+   */
   cta: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -933,10 +952,6 @@ export interface ComparisonTableBlock {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
-   */
-  anchorId?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'comparisonTable';
@@ -960,6 +975,9 @@ export interface TestimonialBlock {
  */
 export interface ProcessStepsBlock {
   headline: string;
+  /**
+   * Prefer linking to a page on this site. Use an external URL only for off-site links.
+   */
   cta: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -987,10 +1005,6 @@ export interface ProcessStepsBlock {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
-   */
-  anchorId?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'processSteps';
@@ -1012,11 +1026,17 @@ export interface MediaHeroBlock {
  */
 export interface CtaCenteredBlock {
   sectionHeader: {
+    /**
+     * Small text above the main heading (e.g. "Benefits"). Leave blank if this section does not use one.
+     */
     eyebrow?: string | null;
     heading: string;
     description?: string | null;
     align?: ('left' | 'center') | null;
   };
+  /**
+   * Prefer linking to a page on this site. Use an external URL only for off-site links.
+   */
   cta: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -1037,10 +1057,6 @@ export interface CtaCenteredBlock {
     appearance?: ('primary' | 'secondary' | 'linkout') | null;
     fullWidth?: boolean | null;
   };
-  /**
-   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
-   */
-  anchorId?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'ctaCentered';
@@ -1345,7 +1361,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
-        backgroundColor?: T;
+        imageFrameColor?: T;
       };
   layout?:
     | T
@@ -1475,7 +1491,6 @@ export interface LogoCloudBlockSelect<T extends boolean = true> {
         alt?: T;
         id?: T;
       };
-  anchorId?: T;
   id?: T;
   blockName?: T;
 }
@@ -1501,7 +1516,6 @@ export interface BenefitsBlockSelect<T extends boolean = true> {
         id?: T;
       };
   image?: T;
-  anchorId?: T;
   id?: T;
   blockName?: T;
 }
@@ -1577,7 +1591,6 @@ export interface ComparisonTableBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  anchorId?: T;
   id?: T;
   blockName?: T;
 }
@@ -1617,7 +1630,6 @@ export interface ProcessStepsBlockSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
-  anchorId?: T;
   id?: T;
   blockName?: T;
 }
@@ -1655,7 +1667,6 @@ export interface CtaCenteredBlockSelect<T extends boolean = true> {
         appearance?: T;
         fullWidth?: T;
       };
-  anchorId?: T;
   id?: T;
   blockName?: T;
 }
@@ -2111,6 +2122,9 @@ export interface Header {
   logo?: (number | null) | Media;
   navItems?:
     | {
+        /**
+         * Prefer linking to a page on this site. Use an external URL only for off-site links.
+         */
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -2129,6 +2143,9 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Prefer linking to a page on this site. Use an external URL only for off-site links.
+   */
   ctaLink: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
@@ -2160,6 +2177,9 @@ export interface Footer {
   logo?: (number | null) | Media;
   navItems?:
     | {
+        /**
+         * Prefer linking to a page on this site. Use an external URL only for off-site links.
+         */
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;

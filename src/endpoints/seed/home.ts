@@ -1,32 +1,26 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 import type { Media } from '@/payload-types'
 
+import { customLink, pageLink } from './linkHelpers'
+
 type HomeArgs = {
+  contactPageId: number | string
   heroImage: Media
   image1: Media
   image2: Media
   image3: Media
 }
 
-const contactCta = {
-  type: 'custom' as const,
-  label: 'Learn More',
-  url: '/contact',
-}
-
-const discoverMoreCta = {
-  type: 'custom' as const,
-  appearance: 'secondary' as const,
-  label: 'Discover More',
-  url: '/contact',
-}
-
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
+  contactPageId,
   heroImage,
   image1,
   image2,
   image3,
 }) => {
+  const contactCta = pageLink(contactPageId, 'Learn More')
+  const discoverMoreCta = pageLink(contactPageId, 'Discover More', { appearance: 'secondary' })
+
   return {
     slug: 'home',
     _status: 'published',
@@ -35,7 +29,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       type: 'glanceHero',
       headline: 'Browse everything.',
       media: heroImage.id,
-      backgroundColor: '#8E9C78',
+      imageFrameColor: 'midGreen',
     },
     layout: [
       {
@@ -52,7 +46,6 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'benefits',
-        anchorId: 'benefits',
         sectionHeader: {
           eyebrow: 'Benefits',
           heading: "We've cracked the code.",
@@ -119,7 +112,6 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'comparisonTable',
-        anchorId: 'specifications',
         sectionHeader: {
           eyebrow: 'Specs',
           heading: 'Why Choose Glance?',
@@ -177,7 +169,6 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'processSteps',
-        anchorId: 'how-to',
         headline: 'Map Your Success',
         cta: discoverMoreCta,
         steps: [
@@ -205,7 +196,6 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'ctaCentered',
-        anchorId: 'contact',
         sectionHeader: {
           heading: 'Connect with us',
           description:

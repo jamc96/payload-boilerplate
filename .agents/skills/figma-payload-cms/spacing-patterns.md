@@ -97,15 +97,20 @@ Check each adjacent pair: previous section **bottom** + next section **top** sho
 
 Common mistake: previous block `pb-120` + next block outer `pt-80` + inner `pt-60` → ~260px instead of ~180–200px.
 
-## Spacing audit subagent prompt
+## Spacing audit (per-section QA subagents)
+
+Run **one readonly QA subagent per section** — not one agent for the whole page. Full workflow: [subagent-strategy.md](subagent-strategy.md).
+
+### QA subagent prompt (single section)
 
 ```
-Audit vertical spacing in {repo} vs Figma fileKey {key}.
-Read docs/FIGMA_PAYLOAD_PROJECT.md for component paths.
-Read all block Component.tsx, hero, header, footer, shared SectionHeader.
-For each section: outer pt/pb, inner border-t+pt, flex gaps vs get_design_context(nodeId from plan).
-Rank fixes by visual impact. Flag symmetric py-* + inner border-t pt-* doubling.
-Output exact className changes per file.
+Role: QA only — readonly. You did NOT build this section.
+
+Audit vertical spacing for ONE section in {repo} vs Figma fileKey {key}, node {nodeId}.
+Read docs/FIGMA_PAYLOAD_PROJECT.md. Read {Component path} only (+ shared SectionHeader if used).
+Compare outer pt/pb, inner border-t+pt, flex gaps vs get_design_context.
+Verdict: PASS | FAIL. Rank fixes by visual impact. Flag symmetric py-* + inner border-t pt-* doubling.
+Output exact className changes. Do NOT edit files.
 ```
 
-Run after functional build (Phase 3) and after polish (Phase 6C).
+Run after functional build (Phase 3) and after polish (Phase 6C). Re-run QA for any section that was fixed.

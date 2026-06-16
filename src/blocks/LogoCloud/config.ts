@@ -1,13 +1,14 @@
 import type { Block } from 'payload'
 
-import { anchorId } from '@/fields/anchorId'
-
 export const LogoCloud: Block = {
   slug: 'logoCloud',
   interfaceName: 'LogoCloudBlock',
   labels: {
-    plural: 'Logo Clouds',
-    singular: 'Logo Cloud',
+    plural: 'Partner Logos',
+    singular: 'Partner Logos',
+  },
+  admin: {
+    description: 'Row of client or partner logos with an optional heading.',
   },
   fields: [
     {
@@ -34,6 +35,5 @@ export const LogoCloud: Block = {
         },
       ],
     },
-    anchorId({ defaultValue: '' }),
   ],
 }

@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-import { anchorId } from '@/fields/anchorId'
 import { iconPicker } from '@/fields/iconPicker'
 import { sectionHeader } from '@/fields/sectionHeader'
 
@@ -34,10 +33,12 @@ export const Benefits: Block = {
       relationTo: 'media',
       required: true,
     },
-    anchorId({ defaultValue: 'benefits' }),
   ],
   labels: {
-    plural: 'Benefits',
+    plural: 'Benefits sections',
     singular: 'Benefits',
+  },
+  admin: {
+    description: 'Icon grid of product benefits with an optional image.',
   },
 }

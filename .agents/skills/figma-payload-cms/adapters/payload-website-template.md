@@ -14,7 +14,11 @@ Project-specific names still live in **`docs/FIGMA_PAYLOAD_PROJECT.md`**. This f
 | Header global | `src/Header/` |
 | Footer global | `src/Footer/` |
 | Seed | `src/endpoints/seed/`, CLI `scripts/seed-cli.mts` |
+| Section anchors | `src/constants/sectionAnchors.ts` — [section-anchors.md](../section-anchors.md) |
 | Frontend CSS | `src/app/(frontend)/globals.css` |
+| E2E | `tests/e2e/`, `playwright.config.ts` |
+| Visual | `tests/visual/`, `playwright.visual.config.ts` |
+| Playwright CLI (optional) | `@playwright/cli` — see [playwright-qa.md](../playwright-qa.md) |
 | Page render | `src/app/(frontend)/[slug]/page.tsx` |
 
 ## Default Payload mapping
@@ -35,6 +39,7 @@ Project-specific names still live in **`docs/FIGMA_PAYLOAD_PROJECT.md`**. This f
 - Clear globals must include **all** fields or validation fails
 - Pass `req` + `context: { disableRevalidate: true }` on seed updates
 - Re-run seed after schema changes
+- Hash nav links must use `sectionAnchorHref()` — same ids as block components ([section-anchors.md](../section-anchors.md))
 - Avoid concurrent Payload inits (E2E + dev) on SQLite
 
 ## Type generation

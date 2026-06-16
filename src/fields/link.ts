@@ -27,6 +27,8 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
     type: 'group',
     admin: {
       hideGutter: true,
+      description:
+        'Prefer linking to a page on this site. Use an external URL only for off-site links.',
     },
     fields: [
       {
@@ -42,11 +44,11 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
             defaultValue: 'reference',
             options: [
               {
-                label: 'Internal link',
+                label: 'Page on this site',
                 value: 'reference',
               },
               {
-                label: 'Custom URL',
+                label: 'External URL',
                 value: 'custom',
               },
             ],
@@ -74,7 +76,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
-      label: 'Document to link to',
+      label: 'Page',
       relationTo: ['pages', 'posts'],
       required: true,
     },

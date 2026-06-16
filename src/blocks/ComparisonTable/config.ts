@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-import { anchorId } from '@/fields/anchorId'
 import { ctaButton } from '@/fields/ctaButton'
 import { sectionHeader } from '@/fields/sectionHeader'
 
@@ -44,10 +43,12 @@ export const ComparisonTable: Block = {
         },
       ],
     },
-    anchorId({ defaultValue: 'specifications' }),
   ],
   labels: {
-    plural: 'Comparison Tables',
-    singular: 'Comparison Table',
+    plural: 'Feature Comparisons',
+    singular: 'Feature Comparison',
+  },
+  admin: {
+    description: 'Side-by-side comparison table for product specs or plans.',
   },
 }

@@ -5,6 +5,7 @@ import type { ProcessStepsBlock as ProcessStepsBlockProps } from '@/payload-type
 import { GlanceButton } from '@/components/GlanceButton'
 import { GlanceSection } from '@/components/GlanceSection'
 import { cn } from '@/utilities/ui'
+import { SECTION_ANCHORS } from '@/constants/sectionAnchors'
 
 const formatStepNumber = (number: string | null | undefined, index: number): string => {
   if (number) {
@@ -15,7 +16,6 @@ const formatStepNumber = (number: string | null | undefined, index: number): str
 }
 
 export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
-  anchorId,
   cta,
   headline,
   steps,
@@ -24,7 +24,7 @@ export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
     <section
       className="border-t border-glance-divider bg-glance-bg pb-[120px] pt-20"
       data-testid="block-processSteps"
-      id={anchorId || undefined}
+      id={SECTION_ANCHORS.processSteps}
     >
       <GlanceSection as="div" className="flex flex-col gap-20">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">

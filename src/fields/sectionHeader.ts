@@ -3,11 +3,13 @@ import type { Field, GroupField } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 
 type SectionHeaderType = (options?: {
+  includeSectionLabel?: boolean
   richTextDescription?: boolean
   overrides?: Partial<GroupField>
 }) => Field
 
 export const sectionHeader: SectionHeaderType = ({
+  includeSectionLabel = true,
   richTextDescription = false,
   overrides = {},
 } = {}) => {
@@ -23,16 +25,22 @@ export const sectionHeader: SectionHeaderType = ({
         label: 'Description',
       }
 
+  const sectionLabelField: Field = {
+    name: 'eyebrow',
+    type: 'text',
+    label: 'Section label (optional)',
+    admin: {
+      description:
+        'Small text above the main heading (e.g. "Benefits"). Leave blank if this section does not use one.',
+    },
+  }
+
   const sectionHeaderField: GroupField = {
     name: 'sectionHeader',
     type: 'group',
-    label: 'Section Header',
+    label: 'Section heading',
     fields: [
-      {
-        name: 'eyebrow',
-        type: 'text',
-        label: 'Eyebrow',
-      },
+      ...(includeSectionLabel ? [sectionLabelField] : []),
       {
         name: 'heading',
         type: 'text',

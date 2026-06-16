@@ -16,7 +16,10 @@ export const MediaHero: Block = {
     },
   ],
   labels: {
-    plural: 'Media Heroes',
-    singular: 'Media Hero',
+    plural: 'Image Highlights',
+    singular: 'Image Highlight',
+  },
+  admin: {
+    description: 'Full-width image with heading and short description.',
   },
 }

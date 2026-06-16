@@ -3,6 +3,8 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from '
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
 import { home } from './home'
+import { customLink, pageLink } from './linkHelpers'
+import { sectionAnchorHref } from '@/constants/sectionAnchors'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
 import { imageHero1 } from './image-hero-1'
@@ -235,29 +237,29 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  await Promise.all([
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      context: {
-        disableRevalidate: true,
-      },
-      data: home({
-        heroImage: imageHomeDoc,
-        image1: image1Doc,
-        image2: image2Doc,
-        image3: image3Doc,
-      }),
+  const contactPageDoc = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: contactPageData({ contactForm: contactForm }),
+  })
+
+  await payload.create({
+    collection: 'pages',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: home({
+      contactPageId: contactPageDoc.id,
+      heroImage: imageHomeDoc,
+      image1: image1Doc,
+      image2: image2Doc,
+      image3: image3Doc,
     }),
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      context: {
-        disableRevalidate: true,
-      },
-      data: contactPageData({ contactForm: contactForm }),
-    }),
-  ])
+  })
 
   payload.logger.info(`— Seeding globals...`)
 
@@ -270,40 +272,19 @@ export const seed = async ({
       data: {
         navItems: [
           {
-            link: {
-              type: 'custom',
-              label: 'Benefits',
-              url: '#benefits',
-            },
+            link: customLink(sectionAnchorHref('benefits'), 'Benefits'),
           },
           {
-            link: {
-              type: 'custom',
-              label: 'Specifications',
-              url: '#specifications',
-            },
+            link: customLink(sectionAnchorHref('comparisonTable'), 'Specifications'),
           },
           {
-            link: {
-              type: 'custom',
-              label: 'How-to',
-              url: '#how-to',
-            },
+            link: customLink(sectionAnchorHref('processSteps'), 'How-to'),
           },
           {
-            link: {
-              type: 'custom',
-              label: 'Contact Us',
-              url: '/contact',
-            },
+            link: pageLink(contactPageDoc.id, 'Contact Us'),
           },
         ],
-        ctaLink: {
-          type: 'custom',
-          appearance: 'primary',
-          label: 'Learn More',
-          url: '/contact',
-        },
+        ctaLink: pageLink(contactPageDoc.id, 'Learn More', { appearance: 'primary' }),
       },
     }),
     payload.updateGlobal({
@@ -314,25 +295,13 @@ export const seed = async ({
       data: {
         navItems: [
           {
-            link: {
-              type: 'custom',
-              label: 'Benefits',
-              url: '#benefits',
-            },
+            link: customLink(sectionAnchorHref('benefits'), 'Benefits'),
           },
           {
-            link: {
-              type: 'custom',
-              label: 'Specifications',
-              url: '#specifications',
-            },
+            link: customLink(sectionAnchorHref('comparisonTable'), 'Specifications'),
           },
           {
-            link: {
-              type: 'custom',
-              label: 'How-to',
-              url: '#how-to',
-            },
+            link: customLink(sectionAnchorHref('processSteps'), 'How-to'),
           },
         ],
         copyrightName: 'Glance',

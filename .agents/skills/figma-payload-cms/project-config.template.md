@@ -10,6 +10,8 @@
 | Project name | `{Project Name}` |
 | Repo root | `{/absolute/or/relative/path}` |
 | Page plan doc | `docs/{PAGE}_PAGE_PLAN.md` |
+| Playwright skill | `~/.cursor/skills/playwright/SKILL.md` |
+| Playwright QA workflow | `.agents/skills/figma-payload-cms/playwright-qa.md` |
 | Target route | `{/}` → CMS slug `{home}` |
 | Stack | `{Next.js + Payload 3.x + Tailwind + …}` |
 
@@ -39,7 +41,7 @@ Document what you create in Phase 0 / 6A:
 | Role | Component path | Notes |
 |------|----------------|-------|
 | Horizontal page inset | `{src/components/SectionContainer/}` | max-width + px only, no vertical padding |
-| Section title group | `{src/components/SectionHeader/}` | eyebrow, heading, description |
+| Section title group | `{src/components/SectionHeader/}` | section label, heading, description |
 | Primary CTA button | `{src/components/PageButton/}` | variants from design |
 | Icon mapper | `{src/components/Icon/}` | optional |
 
@@ -55,6 +57,26 @@ Document what you create in Phase 0 / 6A:
 | Content max width | `--{prefix}-content-max` | e.g. `75rem` (1200px) |
 
 Define in: `{src/app/(frontend)/globals.css}`
+
+## Editor labels (content author UI)
+
+Map code slugs to admin labels — see [editor-experience.md](../.agents/skills/figma-payload-cms/editor-experience.md).
+
+| Code slug | Editor label | Notes |
+|-----------|--------------|-------|
+| `{blockSlug}` | `{Editor-facing name}` | `{When to use}` |
+
+Rules: no hex color fields; internal links default; plain field labels.
+
+## Section anchors (in-page nav)
+
+Path: `{src/constants/sectionAnchors.ts}` — see [section-anchors.md](section-anchors.md)
+
+| Block slug | HTML `id` | Used in nav? |
+|------------|-----------|--------------|
+| `{blockSlug}` | `{html-id}` | `{yes/no}` |
+
+Hardcode `id` on block components; seed nav uses `sectionAnchorHref()`. No CMS "Section ID" field.
 
 ## Visual QA hooks
 
@@ -77,8 +99,9 @@ Define in: `{src/app/(frontend)/globals.css}`
 |---------|---------|
 | `{pnpm dev}` | Local dev server |
 | `{pnpm seed}` | Seed CMS content |
-| `{pnpm test:e2e}` | Functional E2E |
-| `{pnpm test:visual}` | Visual regression |
+| `{pnpm test:e2e}` | Functional E2E (Phase 5) |
+| `{pnpm test:visual}` | Visual regression (Phase 6D) |
+| `{pnpm cli}` | Playwright CLI (optional — see playwright-qa.md) |
 
 ## Optional adapter
 

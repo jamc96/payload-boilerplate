@@ -3,7 +3,8 @@ name: figma-payload-cms
 description: >-
   Portable design-to-CMS workflow: Figma MCP, Cursor subagents, Payload CMS.
   Use when implementing a Figma page in Payload, mapping sections to blocks/globals,
-  phased builds, spacing audit, visual QA, or seeding from figma.com/design URLs.
+  phased builds, per-section build/QA subagents, Playwright E2E/visual + Playwright CLI,
+  spacing audit, or seeding from figma.com/design URLs.
   Read docs/FIGMA_PAYLOAD_PROJECT.md in the target repo for project-specific names and paths.
 ---
 
@@ -11,14 +12,17 @@ description: >-
 
 Portable workflow (same in every repo):
 
-**Figma → plan doc → build subagents (0–5) → spacing audit → polish (6) → QA subagents → visual regression → sign-off**
+**Figma → plan doc → build subagents (one per section) → QA subagents → E2E (Playwright) → polish → visual regression (Playwright) → sign-off**
+
+Subagent rules: [subagent-strategy.md](subagent-strategy.md) · Playwright: [playwright-qa.md](playwright-qa.md)
 
 ## Before any work in a repo
 
 1. Read **`docs/FIGMA_PAYLOAD_PROJECT.md`** (from [project-config.template.md](project-config.template.md) if missing)
 2. Read the page plan **`docs/{PAGE}_PAGE_PLAN.md`**
 3. Load Payload skill if present: `.agents/skills/payload/SKILL.md`
-4. Optional adapter: [adapters/payload-website-template.md](adapters/payload-website-template.md)
+4. Load **Playwright** skill for tests/QA: `~/.cursor/skills/playwright/SKILL.md` — see [playwright-qa.md](playwright-qa.md)
+5. Optional adapter: [adapters/payload-website-template.md](adapters/payload-website-template.md)
 
 **Install / share:** [README.md](README.md)
 
@@ -28,8 +32,10 @@ Portable workflow (same in every repo):
 |------|---------|
 | Figma MCP | `get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets` |
 | Payload CMS + frontend | Blocks, globals, hero — paths in project config |
-| Cursor subagents | Parallel build + parallel QA |
-| Playwright | E2E + visual regression (optional but recommended for Phase 6) |
+| Cursor subagents | **One build + one QA subagent per section** (never the same agent) — [subagent-strategy.md](subagent-strategy.md) |
+| Playwright (`@playwright/test`) | E2E smoke (Phase 5) + visual regression (Phase 6D) — [playwright-qa.md](playwright-qa.md) |
+| Playwright CLI (`@playwright/cli`, optional) | Interactive debug, attach, snapshot during QA — [playwright-qa.md](playwright-qa.md) |
+| Playwright skill | `~/.cursor/skills/playwright/SKILL.md` — locators, traces, flakiness |
 
 ## Process overview
 
@@ -39,13 +45,14 @@ flowchart TD
   P1 --> P2[Phase 2 Plan + approval]
   P2 --> P3[Phase 3 Build 0–5]
   P3 --> P4[Phase 4 Spacing audit]
-  P4 --> P5[Phase 5 Polish 6A–6C]
-  P5 --> P6[Phase 6 QA subagents]
-  P6 --> P7[Phase 7 Visual tests 6D]
-  P7 --> P8[Phase 8 Sign-off 6E]
+  P4 --> P5[Phase 5 E2E Playwright]
+  P5 --> P6[Phase 6 Polish 6A–6C]
+  P6 --> P7[Phase 7 QA subagents]
+  P7 --> P8[Phase 8 Visual tests 6D]
+  P8 --> P9[Phase 9 Sign-off 6E]
 ```
 
-**Rule:** **Separate subagents for build vs QA.** Builders implement; QA agents read code + Figma → PASS/FAIL + ranked fixes. Parent applies fixes and re-runs tests.
+**Rule:** **Separate subagents for build vs QA — one section per subagent.** Builders implement; QA agents (readonly) compare code + Figma → PASS/FAIL + ranked fixes. The agent that built a section must never QA that same section. Parent applies fixes and re-runs QA. Full pattern: [subagent-strategy.md](subagent-strategy.md).
 
 ---
 
@@ -57,6 +64,8 @@ Do not code until:
 2. User approved `docs/{PAGE}_PAGE_PLAN.md`
 3. `docs/FIGMA_PAYLOAD_PROJECT.md` exists with component names and test IDs
 4. Scope answered (brand, CMS vs hardcoded, seed strategy)
+5. **Editor experience** defined — block labels, field glossary, semantic styling, link strategy ([editor-experience.md](editor-experience.md))
+6. **Section anchors** mapped — block slug → HTML id for nav ([section-anchors.md](section-anchors.md))
 
 Figma MCP sequence: see [figma-access.md](figma-access.md).
 
@@ -89,24 +98,28 @@ Use [plan-template.md](plan-template.md). Store Figma node IDs, field schemas, p
 
 | Phase | Scope |
 |-------|--------|
-| 0 | Design tokens, field factories, **shared components from project config** |
+| 0 | Design tokens, field factories, **shared components from project config**, **editor labels** ([editor-experience.md](editor-experience.md)), **`sectionAnchors.ts`** ([section-anchors.md](section-anchors.md)) |
 | 1A | Header / footer |
 | 1B | Hero variant |
-| 2 | Blocks (`config` + `Component`) — parallel |
+| 2 | Blocks (`config` + `Component`) — **one build subagent per block**, parallel |
 | 3 | Register blocks, generate types |
 | 4 | Seed + assets |
-| 5 | E2E smoke tests |
+| 5 | E2E smoke tests — **Build-Tests** then **QA-Tests** subagents ([playwright-qa.md](playwright-qa.md)) |
+| 5b | **QA wave** — one readonly QA subagent per section built in Phase 2 |
 
 Use **project config** component names (not hardcoded `Glance*` names).
 
 ### Build subagent prompt (template)
 
+See full prompts in [subagent-strategy.md](subagent-strategy.md).
+
 ```
+Role: BUILD only — do not QA this section.
 Project: {repo path}
 Config: docs/FIGMA_PAYLOAD_PROJECT.md
-Plan: docs/{PAGE}_PAGE_PLAN.md — Phase {N}
-Skills: .agents/skills/figma-payload-cms/spacing-patterns.md + payload skill if any
+Plan: docs/{PAGE}_PAGE_PLAN.md — Phase {N} — Section: {name}
 Figma: fileKey {key}, node {id}
+Skills: spacing-patterns.md + section-anchors.md + subagent-strategy.md + playwright-qa.md + payload skill if any
 Use SectionContainer (or name from config) for horizontal inset.
 Do NOT use symmetric py-* when inner border-t pt-* exists.
 Do NOT commit unless asked.
@@ -114,43 +127,45 @@ Do NOT commit unless asked.
 
 ---
 
-## Phase 4 — Spacing audit (readonly subagents)
+## Phase 4 — Spacing audit (readonly QA subagents)
 
-After functional build, audit **all** section `Component.tsx` files vs Figma `get_design_context`.
+After functional build, run **one readonly QA subagent per section** vs Figma `get_design_context` — not one monolithic audit.
 
-Split scope: shell | blocks batch A | blocks batch B | cross-cutting (RenderBlocks, globals).
+Each QA agent owns: header | hero | footer | block-{name} | full-page boundaries (last).
 
-Document in plan §5B. Patterns: [spacing-patterns.md](spacing-patterns.md).
+Document findings in plan §5B. Patterns: [spacing-patterns.md](spacing-patterns.md). Prompts: [subagent-strategy.md](subagent-strategy.md).
 
 ---
 
 ## Phase 5 — Visual polish (6A–6C, build subagents)
 
-| Sub-phase | Scope |
-|-----------|--------|
-| 6A | Shared components + test helpers (sequential first) |
-| 6B | Header, hero, footer (parallel) |
-| 6C | Blocks in groups of 2–4 (parallel) |
+| Sub-phase | Build subagents | QA subagents (after each wave) |
+|-----------|-----------------|--------------------------------|
+| 6A | 1 shared foundations | 1 readonly cross-cutting QA |
+| 6B | 1 per shell piece (header, hero, footer) — parallel | 1 readonly QA per shell piece |
+| 6C | **1 per block section** — parallel | **1 readonly QA per block** |
 
-Apply spacing patterns from Figma MCP values, not guesses.
+Apply spacing from Figma MCP values, not guesses. Never skip the QA wave — see [subagent-strategy.md](subagent-strategy.md).
 
 ---
 
 ## Phase 6 — QA (readonly subagents)
 
-Never the same agent that built. Check spacing, testids, a11y, visual infra. Return PASS/FAIL + severity.
+**One QA subagent per section** — never the agent that built it. Check spacing, typography, layout, testids, a11y, anchors. Return PASS/FAIL + severity-ranked fixes.
+
+After all section QAs PASS, run **full-page QA subagent** for section-to-section proportions (see subagent-strategy.md).
 
 ---
 
 ## Phase 7 — Visual regression (6D)
 
-[visual-qa.md](visual-qa.md) — **full-page + per-section** snapshots at breakpoints from project config.
+[visual-qa.md](visual-qa.md) + [playwright-qa.md](playwright-qa.md) — **full-page + per-section** snapshots at breakpoints. **Build-VisualTests** / **QA-Visual** subagents separated. Use Playwright CLI to diagnose failing snapshots when installed.
 
 ---
 
 ## Phase 8 — Sign-off (6E)
 
-Compare `full-page.png` to Figma desktop frame node. Update plan acceptance criteria. Note exceptions in `references/figma/.../MANIFEST.md`.
+Compare `full-page.png` to Figma desktop frame node. **Per-section QA subagents** must PASS before sign-off. Update plan acceptance criteria. Note exceptions in `references/figma/.../MANIFEST.md`.
 
 ---
 
@@ -160,7 +175,8 @@ Compare `full-page.png` to Figma desktop frame node. Update plan acceptance crit
 |---------|-----|
 | Gaps too large | [spacing-patterns.md](spacing-patterns.md) — doubled outer `py-*` |
 | Section OK alone, wrong on page | `full-page.png` — boundary padding stacks |
-| Visual tests flake | `workers: 1`, serial mode, wait fonts + images |
+| Visual tests flake | `workers: 1`, serial mode, wait fonts + images — [playwright-qa.md](playwright-qa.md) |
+| E2E / snapshot failure | Playwright skill: `--trace on`, `test:debug` + `pnpm cli attach` |
 | Wrong component names in skill output | Agent skipped `FIGMA_PAYLOAD_PROJECT.md` |
 | Figma access denied | [figma-access.md](figma-access.md) |
 
@@ -173,8 +189,11 @@ Compare `full-page.png` to Figma desktop frame node. Update plan acceptance crit
 | [README.md](README.md) | Install / share across projects |
 | [project-config.template.md](project-config.template.md) | Per-repo config |
 | [spacing-patterns.md](spacing-patterns.md) | Vertical rhythm |
-| [visual-qa.md](visual-qa.md) | Playwright snapshots |
+| [playwright-qa.md](playwright-qa.md) | Playwright E2E, visual tests, Playwright CLI, test subagents |
+| [visual-qa.md](visual-qa.md) | Snapshot layout and baselines |
+| [editor-experience.md](editor-experience.md) | Content author UX, labels, links, colors |
+| [section-anchors.md](section-anchors.md) | Hardcoded in-page nav ids (not CMS) |
 | [payload-patterns.md](payload-patterns.md) | Payload CMS conventions |
-| [figma-access.md](figma-access.md) | MCP tools |
+| [subagent-strategy.md](subagent-strategy.md) | Per-section build vs QA subagents (pixel-perfect) |
 | [plan-template.md](plan-template.md) | Page plan |
 | [examples/](examples/) | Real project references |

@@ -1,6 +1,5 @@
 import type { Block } from 'payload'
 
-import { anchorId } from '@/fields/anchorId'
 import { ctaButton } from '@/fields/ctaButton'
 
 export const ProcessSteps: Block = {
@@ -34,10 +33,12 @@ export const ProcessSteps: Block = {
         },
       ],
     },
-    anchorId({ defaultValue: 'how-to' }),
   ],
   labels: {
-    plural: 'Process Steps',
-    singular: 'Process Steps',
+    plural: 'How It Works sections',
+    singular: 'How It Works',
+  },
+  admin: {
+    description: 'Numbered steps explaining your product or process.',
   },
 }

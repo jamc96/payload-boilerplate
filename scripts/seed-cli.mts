@@ -1,6 +1,11 @@
 /**
  * CLI seed — run with: pnpm seed
- * Stop `pnpm dev` first if you hit SQLite lock errors.
+ *
+ * After schema field renames or type changes:
+ * 1. Stop `pnpm dev` (avoids SQLite lock)
+ * 2. Run `pnpm seed:fresh` (recommended) or `pnpm seed`
+ * 3. If Drizzle asks about a renamed column, pick "rename" or use seed:fresh
+ * 4. Restart dev and reload the admin
  */
 import 'dotenv/config'
 import { createLocalReq, getPayload } from 'payload'

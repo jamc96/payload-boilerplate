@@ -44,7 +44,10 @@ export const FeatureSplit: Block = {
     },
   ],
   labels: {
-    plural: 'Feature Splits',
-    singular: 'Feature Split',
+    plural: 'Features',
+    singular: 'Features',
+  },
+  admin: {
+    description: 'Image beside a numbered list of feature points and an optional button.',
   },
 }

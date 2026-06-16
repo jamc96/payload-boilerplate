@@ -46,7 +46,11 @@ Point submodule at this skill folder; symlink into `.agents/skills/figma-payload
 | [SKILL.md](SKILL.md) | Main workflow (phases 0–8) — **start here** |
 | [project-config.template.md](project-config.template.md) | Per-project config template |
 | [spacing-patterns.md](spacing-patterns.md) | Figma vertical rhythm (design-agnostic) |
-| [visual-qa.md](visual-qa.md) | Playwright full-page + section snapshots |
+| [playwright-qa.md](playwright-qa.md) | Playwright E2E, visual regression, Playwright CLI, test subagents |
+| [visual-qa.md](visual-qa.md) | Snapshot paths and baselines |
+| [editor-experience.md](editor-experience.md) | Content author UX — labels, colors, links (Phase 0) |
+| [subagent-strategy.md](subagent-strategy.md) | **Per-section build + QA subagents** (pixel-perfect workflow) |
+| [section-anchors.md](section-anchors.md) | Hardcoded `#id` on blocks + nav seed (not CMS) |
 | [payload-patterns.md](payload-patterns.md) | Payload block/hero/seed patterns |
 | [figma-access.md](figma-access.md) | Figma MCP tools and URL rules |
 | [plan-template.md](plan-template.md) | Page implementation plan skeleton |
@@ -55,9 +59,14 @@ Point submodule at this skill folder; symlink into `.agents/skills/figma-payload
 
 ## What stays the same across projects
 
-- Phase gates, discovery, plan approval, build/QA subagent split
+- Phase gates, discovery, plan approval
+- **One build subagent + one QA subagent per section** — never the same agent ([subagent-strategy.md](subagent-strategy.md))
+- Editor experience rules (plain labels, semantic colors, internal links first)
+- Section anchors hardcoded in components — [section-anchors.md](section-anchors.md)
 - Spacing anti-patterns (no doubled `py-*` + inner `border-t pt-*`)
-- Full-page + per-section visual regression
+- Full-page + per-section visual regression (Playwright)
+- Playwright CLI for interactive QA/debug (optional `@playwright/cli`)
+- Load **Playwright skill** (`~/.cursor/skills/playwright/`) for test authoring and flakiness
 - Figma MCP sequence (`get_design_context` for exact gaps)
 
 ## What changes per project

@@ -45,6 +45,19 @@ Reference only — shows how **`docs/FIGMA_PAYLOAD_PROJECT.md`** is filled for o
 
 Export: `tests/helpers/seedGlanceHome.ts` → `GLANCE_SECTION_TEST_IDS`
 
+## Section anchors
+
+`src/constants/sectionAnchors.ts` — hardcoded `#id` on block components (not CMS).
+
+| Block slug | HTML id |
+|------------|---------|
+| `benefits` | `benefits` |
+| `comparisonTable` | `specifications` |
+| `processSteps` | `how-to` |
+| `ctaCentered` | `contact` |
+
+Seed nav: `sectionAnchorHref()` from constants. Skill: [section-anchors.md](../section-anchors.md)
+
 ## Commands
 
 `pnpm dev`, `pnpm seed`, `pnpm test:e2e`, `pnpm test:visual`
@@ -53,4 +66,8 @@ Export: `tests/helpers/seedGlanceHome.ts` → `GLANCE_SECTION_TEST_IDS`
 
 `logoCloud`, `benefits`, `featureSplit`, `comparisonTable`, `testimonial`, `processSteps`, `mediaHero`, `ctaCentered`
 
-See page plan for Figma node IDs and spacing audit (§5B).
+See page plan for Figma node IDs, spacing audit (§5B), and **per-section build/QA subagent table** (§5, §5C).
+
+Subagent rules: [subagent-strategy.md](../subagent-strategy.md)
+
+Playwright E2E/visual/CLI: [playwright-qa.md](../playwright-qa.md) + [playwright skill](~/.cursor/skills/playwright/SKILL.md)

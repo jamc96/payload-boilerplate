@@ -8,6 +8,7 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 import { linkGroup } from '@/fields/linkGroup'
+import { themeColorField } from '@/fields/themeColor'
 
 export const hero: Field = {
   name: 'hero',
@@ -85,14 +86,11 @@ export const hero: Field = {
       relationTo: 'media',
       required: true,
     },
-    {
-      name: 'backgroundColor',
-      type: 'text',
-      defaultValue: '#8E9C78',
+    themeColorField({
       admin: {
         condition: (_, { type } = {}) => type === 'glanceHero',
       },
-    },
+    }),
   ],
   label: false,
 }

@@ -1,6 +1,10 @@
 # Visual QA (Playwright + Figma)
 
-Run in **Phase 6D**. Paths and test IDs come from **`docs/FIGMA_PAYLOAD_PROJECT.md`**.
+Run in **Phase 6D** after **per-section QA subagents PASS** ([subagent-strategy.md](subagent-strategy.md)).
+
+Playwright commands, CLI debug, and **Build-VisualTests / QA-Visual** subagents: [playwright-qa.md](playwright-qa.md). Load **Playwright skill** (`~/.cursor/skills/playwright/SKILL.md`) when writing or fixing specs.
+
+Paths and test IDs come from **`docs/FIGMA_PAYLOAD_PROJECT.md`**.
 
 ## Two-tier strategy
 
@@ -115,6 +119,7 @@ pnpm test:visual --grep "full-page"
 ## When gaps look wrong
 
 1. Compare `full-page.png` to live page
-2. Spacing audit subagent ([spacing-patterns.md](spacing-patterns.md))
-3. Fix doubled padding before tweaking internal gaps
-4. Update baselines only after intentional layout changes
+2. Launch **readonly QA subagent for the failing section only** ([subagent-strategy.md](subagent-strategy.md)) — not the agent that built it
+3. Spacing values: [spacing-patterns.md](spacing-patterns.md)
+4. Fix doubled padding before tweaking internal gaps
+5. Re-run section QA, then update baselines only after intentional layout changes

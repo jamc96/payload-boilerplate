@@ -10,14 +10,13 @@ type Props = LogoCloudBlockProps & {
   className?: string
 }
 
-export const LogoCloudBlock: React.FC<Props> = ({ anchorId, className, label, logos }) => {
+export const LogoCloudBlock: React.FC<Props> = ({ className, label, logos }) => {
   if (!logos?.length) return null
 
   return (
     <section
       className={cn('bg-glance-bg py-[50px]', className)}
       data-testid="block-logoCloud"
-      id={anchorId || undefined}
     >
       <GlanceSection as="div" className="flex flex-col gap-[30px]">
         {label && <p className="font-body text-[15px] text-glance-muted">{label}</p>}

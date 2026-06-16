@@ -6,10 +6,10 @@ import type { ComparisonTableBlock as ComparisonTableBlockProps } from '@/payloa
 import { GlanceButton } from '@/components/GlanceButton'
 import { GlanceSection } from '@/components/GlanceSection'
 import { SectionHeader, type SectionHeaderData } from '@/components/SectionHeader'
+import { SECTION_ANCHORS } from '@/constants/sectionAnchors'
 import { cn } from '@/utilities/ui'
 
 export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
-  anchorId,
   columns,
   cta,
   sectionHeader,
@@ -22,7 +22,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
     <section
       className="border-t border-glance-muted-light bg-glance-bg pb-[120px] pt-20"
       data-testid="block-comparisonTable"
-      id={anchorId || undefined}
+      id={SECTION_ANCHORS.comparisonTable}
     >
       <GlanceSection as="div" className="flex flex-col gap-10">
         <div className="flex flex-col items-center gap-10 text-center">
