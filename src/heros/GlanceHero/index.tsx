@@ -20,12 +20,14 @@ export const GlanceHero: React.FC<Page['hero']> = ({ backgroundColor, headline, 
             className="mt-6 overflow-hidden rounded-[30px] md:mt-10"
             style={{ backgroundColor: barColor }}
           >
-            <Media
-              className="relative w-full"
-              imgClassName="h-auto w-full object-contain"
-              priority
-              resource={media}
-            />
+            <div className="relative w-full">
+              <Media
+                className="relative w-full"
+                imgClassName="h-auto w-full object-contain"
+                priority
+                resource={media}
+              />
+            </div>
           </div>
         )}
       </div>

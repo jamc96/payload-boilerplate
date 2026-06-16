@@ -43,21 +43,42 @@ export const seed = async ({
   // the custom `/api/seed` endpoint does not
   payload.logger.info(`— Clearing collections and globals...`)
 
-  // clear the database
-  await Promise.all(
-    globals.map((global) =>
-      payload.updateGlobal({
-        slug: global,
-        data: {
-          navItems: [],
+  // clear the database — reset globals fully so new fields (ctaLink, copyright, etc.) pass validation
+  await Promise.all([
+    payload.updateGlobal({
+      slug: 'header',
+      req,
+      data: {
+        navItems: [],
+        logo: null,
+        ctaLink: {
+          type: 'custom',
+          label: 'Learn More',
+          url: '/contact',
+          appearance: 'primary',
         },
-        depth: 0,
-        context: {
-          disableRevalidate: true,
-        },
-      }),
-    ),
-  )
+      },
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'footer',
+      req,
+      data: {
+        navItems: [],
+        logo: null,
+        copyrightName: null,
+        year: null,
+        legalText: null,
+      },
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+    }),
+  ])
 
   await Promise.all(
     collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
@@ -121,7 +142,7 @@ export const seed = async ({
       collection: 'media',
       data: image2,
       file: image3Buffer,
-    }),
+    }), // image3 metadata reuses image2 template file
     payload.create({
       collection: 'media',
       data: imageHero1,
@@ -173,6 +194,10 @@ export const seed = async ({
   await payload.update({
     id: post1Doc.id,
     collection: 'posts',
+    req,
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post2Doc.id, post3Doc.id],
     },
@@ -180,6 +205,10 @@ export const seed = async ({
   await payload.update({
     id: post2Doc.id,
     collection: 'posts',
+    req,
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post1Doc.id, post3Doc.id],
     },
@@ -187,6 +216,10 @@ export const seed = async ({
   await payload.update({
     id: post3Doc.id,
     collection: 'posts',
+    req,
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedPosts: [post1Doc.id, post2Doc.id],
     },

@@ -48,7 +48,9 @@ export const SeedButton: React.FC = () => {
                     resolve(true)
                     setSeeded(true)
                   } else {
-                    reject('An error occurred while seeding.')
+                    void res.text().then((body) => {
+                      reject(body || 'An error occurred while seeding.')
+                    })
                   }
                 })
                 .catch((error) => {
