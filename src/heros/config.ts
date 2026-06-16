@@ -35,12 +35,27 @@ export const hero: Field = {
           label: 'Low Impact',
           value: 'lowImpact',
         },
+        {
+          label: 'Glance Hero',
+          value: 'glanceHero',
+        },
       ],
+      required: true,
+    },
+    {
+      name: 'headline',
+      type: 'text',
+      admin: {
+        condition: (_, { type } = {}) => type === 'glanceHero',
+      },
       required: true,
     },
     {
       name: 'richText',
       type: 'richText',
+      admin: {
+        condition: (_, { type } = {}) => type !== 'glanceHero',
+      },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
           return [
@@ -56,16 +71,27 @@ export const hero: Field = {
     linkGroup({
       overrides: {
         maxRows: 2,
+        admin: {
+          condition: (_, { type } = {}) => type !== 'glanceHero',
+        },
       },
     }),
     {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'glanceHero'].includes(type),
       },
       relationTo: 'media',
       required: true,
+    },
+    {
+      name: 'backgroundColor',
+      type: 'text',
+      defaultValue: '#8E9C78',
+      admin: {
+        condition: (_, { type } = {}) => type === 'glanceHero',
+      },
     },
   ],
   label: false,

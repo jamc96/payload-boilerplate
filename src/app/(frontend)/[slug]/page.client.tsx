@@ -2,13 +2,27 @@
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import React, { useEffect } from 'react'
 
-const PageClient: React.FC = () => {
-  /* Force the header to be dark mode while we have an image behind it */
+import type { Page } from '@/payload-types'
+
+type PageClientProps = {
+  heroType?: Page['hero']['type']
+}
+
+const PageClient: React.FC<PageClientProps> = ({ heroType }) => {
   const { setHeaderTheme } = useHeaderTheme()
 
   useEffect(() => {
-    setHeaderTheme('light')
-  }, [setHeaderTheme])
+    if (
+      !heroType ||
+      heroType === 'glanceHero' ||
+      heroType === 'lowImpact' ||
+      heroType === 'mediumImpact' ||
+      heroType === 'none'
+    ) {
+      setHeaderTheme('light')
+    }
+  }, [heroType, setHeaderTheme])
+
   return <React.Fragment />
 }
 
