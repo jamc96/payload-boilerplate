@@ -14,7 +14,7 @@ const PageClient: React.FC<PageClientProps> = ({ heroType }) => {
   useEffect(() => {
     if (
       !heroType ||
-      heroType === 'glanceHero' ||
+      heroType === 'marketingHero' ||
       heroType === 'lowImpact' ||
       heroType === 'mediumImpact' ||
       heroType === 'none'

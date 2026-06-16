@@ -16,8 +16,8 @@ figma.com/site/:fileKey/                     →  NOT supported — get /design/
 | `get_metadata` | Section tree (node IDs) |
 | `get_design_context` | Reference layout + screenshot; **extract `gap-*`, `pt-*`, `pb-*` for spacing** |
 | `get_variable_defs` | Design tokens |
-| `get_screenshot` | Visual QA |
-| `download_assets` | Images for seed |
+| `get_screenshot` | Visual QA — **Phase 0 export only**; agents read local `references/figma/` after setup |
+| `download_assets` | Images for seed — **Phase 0 once** → `public/media/figma/` |
 | `create_new_file` | Blank design file when access blocked |
 
 ## Access workflow when blocked

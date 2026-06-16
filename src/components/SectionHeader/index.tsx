@@ -31,15 +31,15 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ className, data })
       )}
     >
       {eyebrow && (
-        <p className="font-caption text-[12px] tracking-[-0.12px] text-glance-primary">{eyebrow}</p>
+        <p className="font-caption text-[12px] tracking-[-0.12px] text-site-primary">{eyebrow}</p>
       )}
 
-      <h2 className="font-display text-[40px] leading-[0.9] tracking-[-0.03em] text-glance-text md:text-[60px]">
+      <h2 className="font-display text-[40px] leading-[0.9] tracking-[-0.03em] text-site-text md:text-[60px]">
         {heading}
       </h2>
 
       {description && (
-        <p className="max-w-[42rem] font-body text-[15px] leading-[1.4] tracking-[-0.075px] text-glance-muted">
+        <p className="max-w-[42rem] font-body text-[15px] leading-[1.4] tracking-[-0.075px] text-site-muted">
           {description}
         </p>
       )}

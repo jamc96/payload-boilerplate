@@ -20,9 +20,12 @@ Subagent rules: [subagent-strategy.md](subagent-strategy.md) · Playwright: [pla
 
 1. Read **`docs/FIGMA_PAYLOAD_PROJECT.md`** (from [project-config.template.md](project-config.template.md) if missing)
 2. Read the page plan **`docs/{PAGE}_PAGE_PLAN.md`**
-3. Load Payload skill if present: `.agents/skills/payload/SKILL.md`
-4. Load **Playwright** skill for tests/QA: `~/.cursor/skills/playwright/SKILL.md` — see [playwright-qa.md](playwright-qa.md)
-5. Optional adapter: [adapters/payload-website-template.md](adapters/payload-website-template.md)
+3. Load **Payload** skill: `.agents/skills/payload/SKILL.md` — **required**
+4. Load **Playwright** skill: `.agents/skills/playwright/SKILL.md` — routes to [playwright-qa.md](playwright-qa.md) and [visual-qa.md](visual-qa.md)
+5. Load **Playwright CLI** skill: `.agents/skills/playwright-cli/SKILL.md` — **required** for live section QA
+6. Optional adapter: [adapters/payload-website-template.md](adapters/payload-website-template.md)
+
+New repo? Follow [STACK_SETUP.md](STACK_SETUP.md) first.
 
 **Install / share:** [README.md](README.md)
 
@@ -32,10 +35,14 @@ Subagent rules: [subagent-strategy.md](subagent-strategy.md) · Playwright: [pla
 |------|---------|
 | Figma MCP | `get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets` |
 | Payload CMS + frontend | Blocks, globals, hero — paths in project config |
+| **Payload skill** | `.agents/skills/payload/SKILL.md` — schema, hooks, access, queries |
 | Cursor subagents | **One build + one QA subagent per section** (never the same agent) — [subagent-strategy.md](subagent-strategy.md) |
 | Playwright (`@playwright/test`) | E2E smoke (Phase 5) + visual regression (Phase 6D) — [playwright-qa.md](playwright-qa.md) |
-| Playwright CLI (`@playwright/cli`, optional) | Interactive debug, attach, snapshot during QA — [playwright-qa.md](playwright-qa.md) |
-| Playwright skill | `~/.cursor/skills/playwright/SKILL.md` — locators, traces, flakiness |
+| **Playwright CLI** (`@playwright/cli`) | **Required** — live section QA, attach, snapshot — [playwright-qa.md](playwright-qa.md) |
+| **Playwright CLI skill** | `.agents/skills/playwright-cli/SKILL.md` |
+| Playwright skill | `.agents/skills/playwright/SKILL.md` — in-repo index; see playwright-qa.md |
+
+**Git policy:** Commit Figma seed assets (`public/media/figma/`). Never commit snapshot PNGs under `references/` or Playwright report artifacts. See [STACK_SETUP.md](STACK_SETUP.md).
 
 ## Process overview
 
@@ -66,6 +73,8 @@ Do not code until:
 4. Scope answered (brand, CMS vs hardcoded, seed strategy)
 5. **Editor experience** defined — block labels, field glossary, semantic styling, link strategy ([editor-experience.md](editor-experience.md))
 6. **Section anchors** mapped — block slug → HTML id for nav ([section-anchors.md](section-anchors.md))
+7. **Figma reference cache** (recommended) — one-time export of gold-master PNGs + seed assets to local disk; agents read `references/figma/` instead of re-calling MCP screenshots every run ([scripts/figma-refs-setup.md](../../scripts/figma-refs-setup.md), verify with `pnpm figma:refs:check`)
+8. **Seed admin env** — set `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` in `.env` so `pnpm seed:fresh` never requires manual first-user registration
 
 Figma MCP sequence: see [figma-access.md](figma-access.md).
 
@@ -107,7 +116,7 @@ Use [plan-template.md](plan-template.md). Store Figma node IDs, field schemas, p
 | 5 | E2E smoke tests — **Build-Tests** then **QA-Tests** subagents ([playwright-qa.md](playwright-qa.md)) |
 | 5b | **QA wave** — one readonly QA subagent per section built in Phase 2 |
 
-Use **project config** component names (not hardcoded `Glance*` names).
+Use **project config** component names (not hardcoded `Site*` names).
 
 ### Build subagent prompt (template)
 
@@ -175,7 +184,8 @@ Compare `full-page.png` to Figma desktop frame node. **Per-section QA subagents*
 |---------|-----|
 | Gaps too large | [spacing-patterns.md](spacing-patterns.md) — doubled outer `py-*` |
 | Section OK alone, wrong on page | `full-page.png` — boundary padding stacks |
-| Visual tests flake | `workers: 1`, serial mode, wait fonts + images — [playwright-qa.md](playwright-qa.md) |
+| Visual tests flake / slow | Batch spec (`all-sections.visual.spec.ts`) — one navigation per viewport; use `pnpm test:visual:live` + CLI for agent QA — [visual-qa.md](visual-qa.md) |
+| Visual baselines in git | PNGs under `references/playwright/` and `references/figma/` are **gitignored** — regenerate locally |
 | E2E / snapshot failure | Playwright skill: `--trace on`, `test:debug` + `pnpm cli attach` |
 | Wrong component names in skill output | Agent skipped `FIGMA_PAYLOAD_PROJECT.md` |
 | Figma access denied | [figma-access.md](figma-access.md) |

@@ -7,8 +7,8 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { GlanceButton } from '@/components/GlanceButton'
-import { GlanceSection } from '@/components/GlanceSection'
+import { SiteButton } from '@/components/SiteButton'
+import { SiteSection } from '@/components/SiteSection'
 import { Logo } from '@/components/Logo/Logo'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { cn } from '@/utilities/ui'
@@ -61,11 +61,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="relative z-20 bg-glance-bg pt-5 pb-20"
-      data-testid="glance-header"
+      className="relative z-20 bg-site-bg pt-5 pb-20"
+      data-testid="site-header"
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <GlanceSection>
+      <SiteSection>
         <div
           className={cn(
             'relative md:static',
@@ -85,14 +85,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             </div>
 
             <div className="relative z-10 hidden shrink-0 md:block">
-              {ctaLink && <GlanceButton {...ctaLink} appearance={ctaLink.appearance ?? 'linkout'} />}
+              {ctaLink && <SiteButton {...ctaLink} appearance={ctaLink.appearance ?? 'linkout'} />}
             </div>
 
             <button
               aria-controls="header-mobile-menu"
               aria-expanded={mobileOpen}
               aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-              className="relative z-10 inline-flex items-center justify-center rounded-full p-2 text-glance-text md:hidden"
+              className="relative z-10 inline-flex items-center justify-center rounded-full p-2 text-site-text md:hidden"
               onClick={() => setMobileOpen((open) => !open)}
               type="button"
             >
@@ -110,8 +110,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             <div className="overflow-hidden">
               <HeaderNav data={data} mobile onNavigate={() => setMobileOpen(false)} />
               {ctaLink && (
-                <div className="border-t border-glance-divider py-[30px]">
-                  <GlanceButton
+                <div className="border-t border-site-divider py-[30px]">
+                  <SiteButton
                     {...ctaLink}
                     appearance={ctaLink.appearance ?? 'linkout'}
                     className="w-full"
@@ -122,7 +122,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
             </div>
           </div>
         </div>
-      </GlanceSection>
+      </SiteSection>
     </header>
   )
 }

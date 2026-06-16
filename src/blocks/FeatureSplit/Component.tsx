@@ -2,8 +2,8 @@ import React from 'react'
 
 import type { FeatureSplitBlock as FeatureSplitBlockProps } from '@/payload-types'
 
-import { GlanceButton } from '@/components/GlanceButton'
-import { GlanceSection } from '@/components/GlanceSection'
+import { SiteButton } from '@/components/SiteButton'
+import { SiteSection } from '@/components/SiteSection'
 import { Media } from '@/components/Media'
 import { SectionHeader } from '@/components/SectionHeader'
 import { cn } from '@/utilities/ui'
@@ -18,12 +18,12 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
   const imageOnLeft = imagePosition === 'left'
 
   return (
-    <section className="bg-glance-bg pb-[120px]" data-testid="block-featureSplit" data-theme="light">
-      <GlanceSection as="div">
+    <section className="bg-site-bg pb-[120px]" data-testid="block-featureSplit" data-theme="light">
+      <SiteSection as="div">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-5">
           <div
             className={cn(
-              'order-1 flex flex-1 flex-col gap-10 border-t border-glance-divider pt-[60px] pb-20',
+              'order-1 flex flex-1 flex-col gap-10 border-t border-site-divider pt-[60px] pb-20',
               imageOnLeft && 'lg:order-2',
             )}
           >
@@ -33,18 +33,18 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
               <ul className="flex flex-col">
                 {items.map((item, index) => (
                   <li
-                    className="flex flex-row items-start gap-[30px] border-t border-glance-divider py-5"
+                    className="flex flex-row items-start gap-[30px] border-t border-site-divider py-5"
                     key={item.id ?? index}
                   >
                     {item.number && (
                       <p
                         aria-hidden
-                        className="shrink-0 font-body text-[15px] font-bold text-glance-muted"
+                        className="shrink-0 font-body text-[15px] font-bold text-site-muted"
                       >
                         {item.number}
                       </p>
                     )}
-                    <p className="font-body text-[15px] leading-relaxed text-glance-text">
+                    <p className="font-body text-[15px] leading-relaxed text-site-text">
                       {item.text}
                     </p>
                   </li>
@@ -52,7 +52,7 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
               </ul>
             )}
 
-            <GlanceButton {...cta} />
+            <SiteButton {...cta} />
           </div>
 
           {image && (
@@ -74,7 +74,7 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
             </div>
           )}
         </div>
-      </GlanceSection>
+      </SiteSection>
     </section>
   )
 }

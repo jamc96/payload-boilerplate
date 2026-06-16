@@ -6,13 +6,13 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   _status: 'published',
   title: 'Home',
   hero: {
-    type: 'glanceHero',
+    type: 'marketingHero',
     headline: 'Browse everything.',
     imageFrameColor: 'midGreen',
   },
   layout: [],
   meta: {
-    description: 'Glance — browse everything with real insights, without the data overload.',
-    title: 'Glance',
+    description: '— browse everything with real insights, without the data overload.',
+    title: 'Site',
   },
 }

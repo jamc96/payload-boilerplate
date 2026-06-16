@@ -1,15 +1,16 @@
 # Figma + Payload — Project Config
 
-> **This repo:** Glance home page on Payload Website Template.  
-> Process: `.agents/skills/figma-payload-cms/SKILL.md` | Example: `.agents/skills/figma-payload-cms/examples/payload-poc-glance.md`
+> **Boilerplate defaults** for `payload-figma-boilerplate`.  
+> When starting a **new Figma page**, copy [plan-template.md](../.agents/skills/figma-payload-cms/plan-template.md) → `docs/{PAGE}_PAGE_PLAN.md` and update Figma fields below.  
+> Process: `.agents/skills/figma-payload-cms/SKILL.md`
 
 ## Project
 
 | Field | Value |
 |-------|-------|
-| Project name | Glance (payload-poc) |
-| Repo root | `/Users/jose.mejia/projects/payload-poc` |
-| Page plan doc | `docs/GLANCE_HOME_PAGE_PLAN.md` |
+| Project name | Payload Figma Boilerplate |
+| Repo root | `.` |
+| Page plan doc | `docs/HOME_PAGE_PLAN.md` (create per page) |
 | Target route | `/` → CMS slug `home` |
 | Stack | Next.js 16 + Payload 3.85 + SQLite + Tailwind v4 |
 
@@ -17,18 +18,20 @@
 
 | Field | Value |
 |-------|-------|
-| Design URL | https://www.figma.com/design/lEM5McyRvPeMRIn4Ce6q0a |
-| `fileKey` | `lEM5McyRvPeMRIn4Ce6q0a` |
-| Desktop frame | `1:118` @ 1280px |
-| Tablet frame | `1:274` @ 800px |
-| Mobile frame | `1:430` @ 375px |
+| Design URL | `{your figma.com/design/...}` |
+| `fileKey` | `{fileKey}` |
+| Desktop frame | `{node}` @ 1280px |
+| Tablet frame | `{node}` @ 800px |
+| Mobile frame | `{node}` @ 375px |
+
+Replace placeholders when you connect your design. The included demo home works without Figma until then.
 
 ## Payload mapping
 
 | Figma region | Payload entity | Path |
 |--------------|----------------|------|
 | Navigation | header global | `src/Header/` |
-| Hero | `glanceHero` variant | `src/heros/GlanceHero/` |
+| Hero | `marketingHero` variant | `src/heros/MarketingHero/` |
 | Sections | layout blocks | `src/blocks/` |
 | Footer | footer global | `src/Footer/` |
 
@@ -36,78 +39,61 @@
 
 | Role | Path |
 |------|------|
-| Horizontal inset | `src/components/GlanceSection/` |
+| Horizontal inset | `src/components/SiteSection/` |
 | Section title | `src/components/SectionHeader/` |
-| CTA button | `src/components/GlanceButton/` |
+| CTA button | `src/components/SiteButton/` |
 | Icons | `src/components/Icon/` |
 
-## Design tokens (prefix: `glance`)
+## Design tokens (prefix: `site`)
 
 | Token | Variable |
 |-------|----------|
-| Section top | `--glance-section-pt` (80px) |
-| Section bottom | `--glance-section-pb` (120px) |
-| Stack gap | `--glance-gap-stack` (50px) |
-| Column gap | `--glance-column-gap` (20px) |
-| Divider | `--glance-divider` |
+| Primary | `--site-primary` |
+| Section top | `--site-section-pt` (80px) |
+| Section bottom | `--site-section-pb` (120px) |
+| Stack gap | `--site-gap-stack` (50px) |
+| Column gap | `--site-column-gap` (20px) |
+| Divider | `--site-divider` |
 
-File: `src/app/(frontend)/globals.css`
+File: `src/app/(frontend)/globals.css` · Tailwind: `bg-site-*`, `text-site-*`, `border-site-*`
 
-## Editor labels (admin UI)
-
-| Code slug | Editor label | Purpose |
-|-----------|--------------|---------|
-| `logoCloud` | Partner Logos | Client/partner logo strip |
-| `benefits` | Benefits | Icon grid of product benefits |
-| `featureSplit` | Features | Numbered list + image |
-| `comparisonTable` | Feature Comparison | Spec/plan comparison table |
-| `testimonial` | Testimonial | Customer quote |
-| `processSteps` | How It Works | Numbered process steps |
-| `mediaHero` | Image Highlight | Full-width image section |
-| `ctaCentered` | Call to Action | Centered CTA block |
-
-Field rules: semantic colors (`themeColorField`), section label not "eyebrow", internal links first. See `.agents/skills/figma-payload-cms/editor-experience.md`.
-
-## Section anchors (in-page nav)
-
-Path: `src/constants/sectionAnchors.ts` — see [section-anchors.md](../.agents/skills/figma-payload-cms/section-anchors.md)
-
-| Block slug | HTML `id` | Nav label |
-|------------|-----------|-----------|
-| `benefits` | `benefits` | Benefits |
-| `comparisonTable` | `specifications` | Specifications |
-| `processSteps` | `how-to` | How-to |
-| `ctaCentered` | `contact` | Contact |
-
-Hash links in seed: `sectionAnchorHref()`. Full pages: `pageLink()`. No CMS "Section ID" field.
-
-## Visual QA
+## Visual QA hooks
 
 | Field | Value |
 |-------|-------|
-| Header testid | `glance-header` |
-| Hero testid | `glance-hero` |
+| Header testid | `site-header` |
+| Hero testid | `site-hero` |
 | Block testid | `block-{slug}` |
-| Footer testid | `glance-footer` |
-| Section IDs | `tests/helpers/seedGlanceHome.ts` → `GLANCE_SECTION_TEST_IDS` |
-| Page ready helper | `tests/helpers/visualPageReady.ts` |
-| Visual spec | `tests/visual/glance-home.visual.spec.ts` |
-| Playwright config | `playwright.visual.config.ts` |
-| Figma refs | `references/figma/glance-home/` |
-| Baselines | `references/playwright/` |
+| Footer testid | `site-footer` |
+| Section IDs export | `tests/helpers/seedDemoPage.ts` → `PAGE_SECTION_TEST_IDS` |
+| Seed helper | `tests/helpers/seedDemoPage.ts` |
+| Playwright baselines | `references/playwright/{project}/demo-home/` (local only) |
+| Figma refs | `references/figma/example-home/` (local PNGs; `MANIFEST.md` is a sample) |
+
+## Seed admin (`.env`)
+
+| Variable | Default |
+|----------|---------|
+| `SEED_ADMIN_EMAIL` | `admin@example.com` |
+| `SEED_ADMIN_PASSWORD` | `password` |
+| `SEED_ADMIN_NAME` | `Admin` |
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm dev` | Dev server |
-| `pnpm seed` | Seed CMS |
-| `pnpm seed:fresh` | Delete SQLite DB + seed (after schema field changes) |
+| `pnpm seed` | Seed CMS + admin from env |
+| `pnpm seed:fresh` | Delete `payload.db` + seed |
+| `pnpm figma:refs:check` | Verify local Figma PNG cache |
 | `pnpm test:e2e` | E2E |
-| `pnpm test:visual` | Visual regression |
+| `pnpm test:visual` | Visual regression (batch specs) |
+| `pnpm test:visual:live` | Playwright CLI live QA |
 
-Playwright skill: `~/.cursor/skills/playwright/SKILL.md` · Workflow: `.agents/skills/figma-payload-cms/playwright-qa.md`
+Migrate / bootstrap: [.agents/MIGRATE.md](../.agents/MIGRATE.md) · [.agents/skills/figma-payload-cms/STACK_SETUP.md](../.agents/skills/figma-payload-cms/STACK_SETUP.md)
 
-## Adapter
+## Example only
 
-Payload Website Template — `.agents/skills/figma-payload-cms/adapters/payload-website-template.md`
+Full walkthrough with real Figma node IDs: [.agents/skills/figma-payload-cms/examples/EXAMPLE_PAGE_PLAN.md](../.agents/skills/figma-payload-cms/examples/EXAMPLE_PAGE_PLAN.md)
+
+Adapter: [payload-website-template.md](../.agents/skills/figma-payload-cms/adapters/payload-website-template.md)

@@ -166,7 +166,22 @@ After visual test failures:
 
 - [ ] Assign **QA subagent** to the failing `data-testid` section (readonly diff analysis)
 - [ ] Assign **build subagent** to implement fix for that section only
-- [ ] Re-run visual test for that section + full-page snapshot
+- [ ] Re-run `SKIP_VISUAL_SEED=1 pnpm test:visual --grep "@section {testId}"` then `@full-page`
+
+---
+
+## Visual test parallelism (Phase 6D / 6E)
+
+Specs are split: `tests/visual/sections/{testId}.visual.spec.ts` (tag `@section`) + `full-page.visual.spec.ts` (tag `@full-page`). Seed runs once in `visualGlobalSetup.ts`.
+
+| Role | Command |
+|------|---------|
+| Parent | `pnpm seed:fresh` + `pnpm dev` |
+| QA-Visual × N (parallel) | `SKIP_VISUAL_SEED=1 pnpm test:visual --grep "@section {testId}"` |
+| QA-Visual × 3 (by breakpoint) | `SKIP_VISUAL_SEED=1 pnpm test:visual:sections --project=desktop` (etc.) |
+| Full-page QA (last) | `SKIP_VISUAL_SEED=1 pnpm test:visual:full-page` |
+
+Playwright baselines and Figma PNG refs are **local/gitignored** — subagents regenerate with `--update-snapshots` after QA PASS; do not commit PNGs.
 
 ---
 
@@ -190,6 +205,7 @@ Do not merge unrelated sections into one subagent to “save time” — context
 | One agent for all blocks | One build subagent per section |
 | QA agent edits code | QA reports; parent or build agent fixes |
 | Skip QA before visual tests | Per-section QA PASS → then Playwright baselines |
+| Commit Playwright/Figma PNGs | Gitignore; regenerate locally |
 | Visual diff without Figma context | QA subagent pulls `get_design_context` for that node |
 
 ---

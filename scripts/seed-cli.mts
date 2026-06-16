@@ -6,33 +6,20 @@
  * 2. Run `pnpm seed:fresh` (recommended) or `pnpm seed`
  * 3. If Drizzle asks about a renamed column, pick "rename" or use seed:fresh
  * 4. Restart dev and reload the admin
+ *
+ * Admin login: SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD (see .env.example)
  */
 import 'dotenv/config'
 import { createLocalReq, getPayload } from 'payload'
 import config from '../src/payload.config.js'
+import { ensureSeedAdminUser, getSeedAdminCredentials } from '../src/endpoints/seed/ensureAdminUser.js'
 import { seed } from '../src/endpoints/seed/index.js'
 
 const payload = await getPayload({ config })
+const user = await ensureSeedAdminUser(payload)
+const { email } = getSeedAdminCredentials()
 
-let user = (
-  await payload.find({
-    collection: 'users',
-    limit: 1,
-    overrideAccess: true,
-  })
-).docs[0]
-
-if (!user) {
-  user = await payload.create({
-    collection: 'users',
-    data: {
-      email: 'admin@example.com',
-      password: 'password',
-    },
-    overrideAccess: true,
-  })
-  payload.logger.info('Created admin@example.com / password')
-}
+payload.logger.info(`Seed admin ready: ${email} (password from SEED_ADMIN_PASSWORD or default)`)
 
 const req = await createLocalReq({ user }, payload)
 await seed({ payload, req })

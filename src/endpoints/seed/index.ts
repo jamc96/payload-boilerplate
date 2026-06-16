@@ -1,9 +1,22 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
+import { readdir, rm, unlink } from 'node:fs/promises'
+import path from 'node:path'
+
 import { contactForm as contactFormData } from './contact-form'
 import { contact as contactPageData } from './contact-page'
+import { fetchLocalFile } from './fetchLocalFile'
 import { home } from './home'
 import { customLink, pageLink } from './linkHelpers'
+import {
+  FIGMA_MEDIA_PATHS,
+  demoBenefitsImage,
+  demoFeatureSplitImage,
+  marketingHeroImage,
+  demoLogoImages,
+  demoMediaHeroImage,
+  demoTestimonialImage,
+} from './figma-media'
 import { sectionAnchorHref } from '@/constants/sectionAnchors'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
@@ -106,7 +119,25 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
+  await clearUploadedMedia()
+
+  const [
+    image1Buffer,
+    image2Buffer,
+    image3Buffer,
+    hero1Buffer,
+    marketingHeroBuffer,
+    demoLogo1Buffer,
+    demoLogo2Buffer,
+    demoLogo3Buffer,
+    demoLogo4Buffer,
+    demoLogo5Buffer,
+    demoLogo6Buffer,
+    demoBenefitsBuffer,
+    demoFeatureSplitBuffer,
+    demoTestimonialBuffer,
+    demoMediaHeroBuffer,
+  ] = await Promise.all([
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-post1.webp',
     ),
@@ -119,9 +150,41 @@ export const seed = async ({
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/3.x/templates/website/src/endpoints/seed/image-hero1.webp',
     ),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.hero),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[0]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[1]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[2]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[3]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[4]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.logos[5]),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.benefits),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.featureSplit),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.testimonial),
+    fetchLocalFile(FIGMA_MEDIA_PATHS.mediaHero),
   ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const demoLogoBuffers = [
+    demoLogo1Buffer,
+    demoLogo2Buffer,
+    demoLogo3Buffer,
+    demoLogo4Buffer,
+    demoLogo5Buffer,
+    demoLogo6Buffer,
+  ]
+
+  const [
+    demoAuthor,
+    image1Doc,
+    image2Doc,
+    image3Doc,
+    imageHomeDoc,
+    marketingHeroDoc,
+    demoBenefitsDoc,
+    demoFeatureSplitDoc,
+    demoTestimonialDoc,
+    demoMediaHeroDoc,
+    ...demoLogoDocs
+  ] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
@@ -150,6 +213,41 @@ export const seed = async ({
       data: imageHero1,
       file: hero1Buffer,
     }),
+    payload.create({
+      collection: 'media',
+      data: marketingHeroImage,
+      file: marketingHeroBuffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: demoBenefitsImage,
+      file: demoBenefitsBuffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: demoFeatureSplitImage,
+      file: demoFeatureSplitBuffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: demoTestimonialImage,
+      file: demoTestimonialBuffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: demoMediaHeroImage,
+      file: demoMediaHeroBuffer,
+    }),
+    ...demoLogoImages.map((logoMeta, index) =>
+      payload.create({
+        collection: 'media',
+        data: logoMeta,
+        file: demoLogoBuffers[index],
+      }),
+    ),
+  ])
+
+  await Promise.all(
     categories.map((category) =>
       payload.create({
         collection: 'categories',
@@ -159,7 +257,7 @@ export const seed = async ({
         },
       }),
     ),
-  ])
+  )
 
   payload.logger.info(`— Seeding posts...`)
 
@@ -253,11 +351,13 @@ export const seed = async ({
       disableRevalidate: true,
     },
     data: home({
+      benefitsImage: demoBenefitsDoc,
       contactPageId: contactPageDoc.id,
-      heroImage: imageHomeDoc,
-      image1: image1Doc,
-      image2: image2Doc,
-      image3: image3Doc,
+      featureSplitImage: demoFeatureSplitDoc,
+      heroImage: marketingHeroDoc,
+      logoImages: demoLogoDocs,
+      mediaHeroImage: demoMediaHeroDoc,
+      testimonialImage: demoTestimonialDoc,
     }),
   })
 
@@ -304,7 +404,7 @@ export const seed = async ({
             link: customLink(sectionAnchorHref('processSteps'), 'How-to'),
           },
         ],
-        copyrightName: 'Glance',
+        copyrightName: 'Site',
         year: 2025,
         legalText: 'All Rights Reserved',
       },
@@ -312,6 +412,26 @@ export const seed = async ({
   ])
 
   payload.logger.info('Seeded database successfully!')
+}
+
+async function clearUploadedMedia(): Promise<void> {
+  const mediaDir = path.join(process.cwd(), 'public', 'media')
+  const entries = await readdir(mediaDir, { withFileTypes: true })
+
+  await Promise.all(
+    entries.map(async (entry) => {
+      if (entry.name === 'figma') return
+
+      const entryPath = path.join(mediaDir, entry.name)
+
+      if (entry.isDirectory()) {
+        await rm(entryPath, { recursive: true, force: true })
+        return
+      }
+
+      await unlink(entryPath)
+    }),
+  )
 }
 
 async function fetchFileByURL(url: string): Promise<File> {

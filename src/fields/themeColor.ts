@@ -24,9 +24,9 @@ export const themeColorOptions: Record<
 }
 
 export const themeColorClassMap: Record<ThemeColorValue, string> = {
-  midGreen: 'bg-glance-mid-green',
-  primary: 'bg-glance-primary',
-  primaryLight: 'bg-glance-primary-light',
+  midGreen: 'bg-site-mid-green',
+  primary: 'bg-site-primary',
+  primaryLight: 'bg-site-primary-light',
 }
 
 type ThemeColorFieldType = (options?: {

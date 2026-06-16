@@ -4,19 +4,23 @@ import type { Media } from '@/payload-types'
 import { customLink, pageLink } from './linkHelpers'
 
 type HomeArgs = {
+  benefitsImage: Media
   contactPageId: number | string
+  featureSplitImage: Media
   heroImage: Media
-  image1: Media
-  image2: Media
-  image3: Media
+  logoImages: Media[]
+  mediaHeroImage: Media
+  testimonialImage: Media
 }
 
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
+  benefitsImage,
   contactPageId,
+  featureSplitImage,
   heroImage,
-  image1,
-  image2,
-  image3,
+  logoImages,
+  mediaHeroImage,
+  testimonialImage,
 }) => {
   const contactCta = pageLink(contactPageId, 'Learn More')
   const discoverMoreCta = pageLink(contactPageId, 'Discover More', { appearance: 'secondary' })
@@ -26,7 +30,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
     _status: 'published',
     title: 'Home',
     hero: {
-      type: 'glanceHero',
+      type: 'marketingHero',
       headline: 'Browse everything.',
       media: heroImage.id,
       imageFrameColor: 'midGreen',
@@ -35,21 +39,17 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       {
         blockType: 'logoCloud',
         label: 'Trusted by:',
-        logos: [
-          { image: image1.id, alt: 'Partner logo 1' },
-          { image: image2.id, alt: 'Partner logo 2' },
-          { image: image3.id, alt: 'Partner logo 3' },
-          { image: image1.id, alt: 'Partner logo 4' },
-          { image: image2.id, alt: 'Partner logo 5' },
-          { image: image3.id, alt: 'Partner logo 6' },
-        ],
+        logos: logoImages.map((logo, index) => ({
+          image: logo.id,
+          alt: logo.alt || `Partner logo ${index + 1}`,
+        })),
       },
       {
         blockType: 'benefits',
         sectionHeader: {
           eyebrow: 'Benefits',
           heading: "We've cracked the code.",
-          description: 'Glance provides real insights, without the data overload.',
+          description: 'provides real insights, without the data overload.',
           align: 'left',
         },
         items: [
@@ -78,14 +78,14 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
               'Generate precise, visually compelling reports that illustrate your growth trajectories across all regions.',
           },
         ],
-        image: image1.id,
+        image: benefitsImage.id,
       },
       {
         blockType: 'featureSplit',
         sectionHeader: {
           heading: 'See the Big Picture',
           description:
-            "Glance turns your data into clear, vibrant visuals that show you exactly what's happening in each region.",
+            "turns your data into clear, vibrant visuals that show you exactly what's happening in each region.",
           align: 'left',
         },
         items: [
@@ -107,22 +107,22 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
           },
         ],
         cta: discoverMoreCta,
-        image: image2.id,
+        image: featureSplitImage.id,
         imagePosition: 'right',
       },
       {
         blockType: 'comparisonTable',
         sectionHeader: {
           eyebrow: 'Specs',
-          heading: 'Why Choose Glance?',
+          heading: 'Why Choose Site?',
           description:
-            "You need a solution that keeps up. That's why we developed Glance. A developer-friendly approach to streamline your business.",
+            "You need a solution that keeps up. That's why we developed Site. A developer-friendly approach to streamline your business.",
           align: 'center',
         },
         cta: discoverMoreCta,
         columns: [
           {
-            name: 'Glance',
+            name: 'Site',
             highlighted: true,
             features: [
               { included: true, label: 'Ultra-fast browsing' },
@@ -161,9 +161,9 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'testimonial',
-        image: image3.id,
+        image: testimonialImage.id,
         quote:
-          "I was skeptical, but Glance has completely transformed the way I manage my business. The data visualizations are so clear and intuitive, and the platform is so easy to use. I can't imagine running my company without it.",
+          "I was skeptical, but has completely transformed the way I manage my business. The data visualizations are so clear and intuitive, and the platform is so easy to use. I can't imagine running my company without it.",
         authorName: 'John Smith',
         authorTitle: 'Head of Data',
       },
@@ -180,7 +180,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
           {
             number: '02',
             title: 'Customize and Configure',
-            description: 'Adapt Glance to your specific requirements and preferences.',
+            description: 'Adapt to your specific requirements and preferences.',
           },
           {
             number: '03',
@@ -191,7 +191,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
       {
         blockType: 'mediaHero',
-        media: image1.id,
+        media: mediaHeroImage.id,
         alt: 'Landscape view',
       },
       {
@@ -199,7 +199,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         sectionHeader: {
           heading: 'Connect with us',
           description:
-            'Schedule a quick call to learn how Glance can turn your regional data into a powerful advantage.',
+            'Schedule a quick call to learn how can turn your regional data into a powerful advantage.',
           align: 'center',
         },
         cta: {
@@ -210,9 +210,9 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
     ],
     meta: {
-      description: 'Glance — browse everything with real insights, without the data overload.',
+      description: '— browse everything with real insights, without the data overload.',
       image: heroImage.id,
-      title: 'Glance',
+      title: 'Site',
     },
   }
 }

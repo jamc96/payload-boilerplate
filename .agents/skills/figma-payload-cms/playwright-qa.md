@@ -4,15 +4,16 @@ Playwright is part of the Figma → Payload workflow for **functional E2E**, **v
 
 ---
 
-## Skills to load (agents)
+## Skills to load (agents) — all required on this stack
 
 | Skill | Location | When |
 |-------|----------|------|
-| **Playwright** | `~/.cursor/skills/playwright/SKILL.md` (or `.cursor/skills/playwright/`) | Writing, debugging, or reviewing any test; flakiness; locators |
+| **Payload CMS** | `.agents/skills/payload/SKILL.md` | Schema, seed, hooks, access, collections |
 | **Figma → Payload** | This skill pack | Page build, visual baselines, project config |
-| **Playwright CLI skills** (optional) | After `playwright-cli install --skills` → under `node_modules` | Agent-driven browser exploration, `--debug=cli` sessions |
+| **Playwright** | `.agents/skills/playwright/SKILL.md` | E2E/visual — routes to playwright-qa.md |
+| **Playwright CLI** | `.agents/skills/playwright-cli/SKILL.md` | Live QA — `pnpm test:visual:live`, attach, snapshot |
 
-Load **Playwright** skill whenever touching `tests/e2e/`, `tests/visual/`, or investigating a failing snapshot.
+New project bootstrap: [STACK_SETUP.md](STACK_SETUP.md)
 
 ---
 
@@ -21,7 +22,7 @@ Load **Playwright** skill whenever touching `tests/e2e/`, `tests/visual/`, or in
 | Package | Purpose | Typical scripts |
 |---------|---------|-----------------|
 | `@playwright/test` | E2E + visual regression (CI) | `test:e2e`, `test:visual` |
-| `@playwright/cli` (optional, recommended) | Agent attach, snapshot, heal, explore | `cli`, `test:debug` |
+| `@playwright/cli` | **Required** — live section QA, attach, snapshot | `cli`, `test:visual:live`, `test:debug` |
 
 Document commands in **`docs/FIGMA_PAYLOAD_PROJECT.md`**.
 
@@ -78,19 +79,22 @@ From project config — typical values:
 ```bash
 # Functional E2E (Phase 5)
 pnpm test:e2e
-pnpm test:e2e --grep "Glance Home"
+pnpm test:e2e --grep "Home"
 
-# Visual regression (Phase 6D) — see visual-qa.md
+# Visual regression (Phase 6D) — batch specs (fast)
 pnpm test:visual
-pnpm test:visual --grep "full-page"
 pnpm test:visual --update-snapshots   # only after intentional layout change + QA PASS
+
+# Live agent QA — Playwright CLI (preferred during build/QA subagents)
+pnpm test:visual:live
+# attach tw-XXXX → pnpm cli snapshot on each section
 
 # Interactive debug (load Playwright skill)
 npx playwright test --ui
-npx playwright test tests/e2e/glance-home.e2e.spec.ts --trace on
+npx playwright test tests/e2e/demo-home.e2e.spec.ts --trace on
 
 # Playwright CLI (when @playwright/cli installed)
-pnpm test:debug tests/e2e/glance-home.e2e.spec.ts -g "anchor"
+pnpm test:debug tests/e2e/demo-home.e2e.spec.ts -g "anchor"
 # → note tw-XXXX from output, then:
 pnpm cli attach tw-XXXX
 pnpm cli snapshot
@@ -98,7 +102,7 @@ pnpm cli generate-locator e5 --raw
 pnpm cli resume
 ```
 
-**Before visual tests:** seed CMS (`pnpm seed` / `seed:fresh`), `workers: 1`, serial mode — see [visual-qa.md](visual-qa.md).
+**Before visual tests:** `pnpm seed:fresh` once (or rely on `tests/global/visualGlobalSetup.ts`). Default `pnpm test:visual` runs **batch specs** (one navigation per viewport). Use **`pnpm test:visual:live`** for agent QA — see [visual-qa.md](visual-qa.md).
 
 ---
 
@@ -173,6 +177,37 @@ Tasks:
 Full-page failures: check section boundary padding before per-block tweaks.
 ```
 
+### Batch visual runs + CLI live QA
+
+Default suite: `all-sections.visual.spec.ts` (`@sections batch`) + `full-page.visual.spec.ts`.  
+Isolated per-section files tagged `@isolated` — excluded from `pnpm test:visual`; use `pnpm test:visual:section` only when needed.
+
+**Parent orchestrator:**
+
+```bash
+pnpm seed:fresh          # once — uses SEED_ADMIN_* from .env
+pnpm dev                 # keep running (reuseExistingServer)
+pnpm figma:refs:check    # optional — verify local Figma PNG cache
+```
+
+**Agent QA (fast — preferred):**
+
+```bash
+pnpm test:visual:live
+pnpm cli attach tw-XXXX
+pnpm cli goto http://localhost:3000/
+pnpm cli snapshot        # vs references/figma/ local gold masters
+```
+
+**CI / sign-off batch:**
+
+```bash
+SKIP_VISUAL_SEED=1 pnpm test:visual
+SKIP_VISUAL_SEED=1 pnpm test:visual:full-page
+```
+
+Config: `workers: 3` locally (one per viewport), `fullyParallel: true`, baselines at `references/playwright/{project}/demo-home/` (**PNGs gitignored**).
+
 Use **Playwright CLI** to open the page at the failing viewport, scroll to the section, and `snapshot` for accessibility-tree context when diagnosing.
 
 ---
@@ -207,9 +242,12 @@ In `docs/{PAGE}_PAGE_PLAN.md`:
 ## Checklist
 
 - [ ] `@playwright/test` configured with `webServer: pnpm dev`
-- [ ] Seed helper shared by E2E + visual tests
+- [ ] `globalSetup` seeds once; per-section specs under `tests/visual/sections/`
+- [ ] Seed helper shared by E2E + visual tests (`SKIP_VISUAL_SEED=1` for parallel subagents)
 - [ ] Section testids match [visual-qa.md](visual-qa.md)
 - [ ] E2E asserts section anchor ids from [section-anchors.md](section-anchors.md)
+- [ ] Required skills installed: Payload, Playwright, Playwright CLI — [STACK_SETUP.md](STACK_SETUP.md)
+- [ ] `references/playwright/` and `references/figma/` snapshot PNGs gitignored; seed assets in `public/media/figma/` committed
 - [ ] `(optional) @playwright/cli` + `pnpm cli install --skills`
 - [ ] Build-Tests and QA-Tests subagents separated
 - [ ] Visual baselines only updated after section QA PASS
@@ -221,7 +259,9 @@ In `docs/{PAGE}_PAGE_PLAN.md`:
 | Avoid | Do instead |
 |-------|------------|
 | One agent writes and “verifies” tests alone | Build-Tests + QA-Tests subagents |
-| `waitForTimeout` in visual specs | `visualPageReady` + expect auto-wait |
+| Monolithic visual spec + `beforeAll` seed per file | `globalSetup` + per-section spec files |
+| Commit Playwright/Figma PNGs | Gitignore; regenerate locally |
+| `waitForTimeout` in visual specs | `visualPageReady` / `visualSectionSnapshot` helpers |
 | Update snapshots without QA | Section QA PASS → then `--update-snapshots` |
 | Skip E2E before visual | Phase 5 green → then Phase 6D |
 | Global `npx playwright-cli` | Project devDependency + `pnpm cli` |

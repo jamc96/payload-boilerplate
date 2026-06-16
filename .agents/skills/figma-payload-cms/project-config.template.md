@@ -10,7 +10,7 @@
 | Project name | `{Project Name}` |
 | Repo root | `{/absolute/or/relative/path}` |
 | Page plan doc | `docs/{PAGE}_PAGE_PLAN.md` |
-| Playwright skill | `~/.cursor/skills/playwright/SKILL.md` |
+| Playwright skill | `.agents/skills/playwright/SKILL.md` |
 | Playwright QA workflow | `.agents/skills/figma-payload-cms/playwright-qa.md` |
 | Target route | `{/}` → CMS slug `{home}` |
 | Stack | `{Next.js + Payload 3.x + Tailwind + …}` |
@@ -78,6 +78,28 @@ Path: `{src/constants/sectionAnchors.ts}` — see [section-anchors.md](section-a
 
 Hardcode `id` on block components; seed nav uses `sectionAnchorHref()`. No CMS "Section ID" field.
 
+## Required agent skills (mandatory — same stack)
+
+| Skill | Path |
+|-------|------|
+| Payload CMS | `.agents/skills/payload/SKILL.md` |
+| Figma → Payload | `.agents/skills/figma-payload-cms/SKILL.md` |
+| Playwright | `.agents/skills/playwright/SKILL.md` |
+| Playwright CLI | `.agents/skills/playwright-cli/SKILL.md` |
+
+Bootstrap new repos: `.agents/skills/figma-payload-cms/STACK_SETUP.md`
+
+## Git policy (assets vs snapshots)
+
+| Commit | Do not commit |
+|--------|----------------|
+| `public/media/figma/` — Figma seed assets | `public/media/file/` — Payload uploads |
+| `references/figma/**/MANIFEST.md`, `.gitkeep` | `references/figma/**/*.png` — gold masters |
+| `references/playwright/**/*.md` | `references/playwright/**` images — baselines |
+| | `playwright-report/`, `test-results/` |
+
+Copy `references/playwright/.gitignore` and `references/figma/.gitignore` into every new project.
+
 ## Visual QA hooks
 
 | Field | Value |
@@ -88,19 +110,25 @@ Hardcode `id` on block components; seed nav uses `sectionAnchorHref()`. No CMS "
 | Footer testid | `{site-footer}` |
 | Section test IDs export | `{tests/helpers/pageSectionTestIds.ts}` |
 | Seed helper for tests | `{tests/helpers/seedPageContent.ts}` |
-| Visual spec | `{tests/visual/{page}.visual.spec.ts}` |
+| Global visual seed | `{tests/global/visualGlobalSetup.ts}` |
+| Visual specs | `{tests/visual/full-page.visual.spec.ts}` + `{tests/visual/sections/*.visual.spec.ts}` |
+| Section snapshot helper | `{tests/helpers/visualSectionSnapshot.ts}` |
 | Playwright visual config | `{playwright.visual.config.ts}` |
-| Figma refs folder | `{references/figma/{page}/}` |
-| Playwright baselines | `{references/playwright/}` |
+| Figma refs folder | `{references/figma/{page}/}` (MANIFEST committed; PNGs local/gitignored) |
+| Playwright baselines | `{references/playwright/{project}/demo-home/}` (PNGs local/gitignored) |
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `{pnpm dev}` | Local dev server |
-| `{pnpm seed}` | Seed CMS content |
+| `{pnpm seed}` | Seed CMS (creates admin from `SEED_ADMIN_*` env) |
+| `{pnpm figma:refs:check}` | Verify local Figma gold-master PNG cache |
 | `{pnpm test:e2e}` | Functional E2E (Phase 5) |
-| `{pnpm test:visual}` | Visual regression (Phase 6D) |
+| `{pnpm test:visual}` | Visual regression — batch specs (fast; excludes `@isolated`) |
+| `{pnpm test:visual:live}` | Playwright CLI attach for live agent QA |
+| `{pnpm test:visual:section}` | One isolated section spec (slow) |
+| `SKIP_VISUAL_SEED=1 {pnpm test:visual}` | Skip global seed when parent already seeded |
 | `{pnpm cli}` | Playwright CLI (optional — see playwright-qa.md) |
 
 ## Optional adapter

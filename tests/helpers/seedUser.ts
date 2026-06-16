@@ -1,36 +1,22 @@
 import { getPayload } from 'payload'
+
 import config from '../../src/payload.config.js'
 
-export const testUser = {
-  email: 'dev@payloadcms.com',
-  password: 'test',
-}
+import { ensureSeedAdminUser, getSeedAdminCredentials } from '../../src/endpoints/seed/ensureAdminUser.js'
+
+/** Same credentials as CLI seed admin — override via SEED_ADMIN_* env vars. */
+export const testUser = getSeedAdminCredentials()
 
 /**
- * Seeds a test user for e2e admin tests.
+ * Ensures the seed admin exists for e2e / visual tests.
  */
 export async function seedTestUser(): Promise<void> {
   const payload = await getPayload({ config })
-
-  // Delete existing test user if any
-  await payload.delete({
-    collection: 'users',
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
-
-  // Create fresh test user
-  await payload.create({
-    collection: 'users',
-    data: testUser,
-  })
+  await ensureSeedAdminUser(payload)
 }
 
 /**
- * Cleans up test user after tests
+ * Cleans up seed admin after isolated tests (optional).
  */
 export async function cleanupTestUser(): Promise<void> {
   const payload = await getPayload({ config })

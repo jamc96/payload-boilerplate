@@ -2,7 +2,7 @@ import React from 'react'
 
 import type { LogoCloudBlock as LogoCloudBlockProps } from '@/payload-types'
 
-import { GlanceSection } from '@/components/GlanceSection'
+import { SiteSection } from '@/components/SiteSection'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 
@@ -15,11 +15,11 @@ export const LogoCloudBlock: React.FC<Props> = ({ className, label, logos }) => 
 
   return (
     <section
-      className={cn('bg-glance-bg py-[50px]', className)}
+      className={cn('bg-site-bg py-[50px]', className)}
       data-testid="block-logoCloud"
     >
-      <GlanceSection as="div" className="flex flex-col gap-[30px]">
-        {label && <p className="font-body text-[15px] text-glance-muted">{label}</p>}
+      <SiteSection as="div" className="flex flex-col gap-[30px]">
+        {label && <p className="font-body text-[15px] text-site-muted">{label}</p>}
         <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5">
           {logos.map((logo, index) => {
             const { alt, image } = logo
@@ -41,7 +41,7 @@ export const LogoCloudBlock: React.FC<Props> = ({ className, label, logos }) => 
             )
           })}
         </ul>
-      </GlanceSection>
+      </SiteSection>
     </section>
   )
 }

@@ -37,8 +37,8 @@ export const hero: Field = {
           value: 'lowImpact',
         },
         {
-          label: 'Glance Hero',
-          value: 'glanceHero',
+          label: 'Marketing Hero',
+          value: 'marketingHero',
         },
       ],
       required: true,
@@ -47,7 +47,7 @@ export const hero: Field = {
       name: 'headline',
       type: 'text',
       admin: {
-        condition: (_, { type } = {}) => type === 'glanceHero',
+        condition: (_, { type } = {}) => type === 'marketingHero',
       },
       required: true,
     },
@@ -55,7 +55,7 @@ export const hero: Field = {
       name: 'richText',
       type: 'richText',
       admin: {
-        condition: (_, { type } = {}) => type !== 'glanceHero',
+        condition: (_, { type } = {}) => type !== 'marketingHero',
       },
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
@@ -73,7 +73,7 @@ export const hero: Field = {
       overrides: {
         maxRows: 2,
         admin: {
-          condition: (_, { type } = {}) => type !== 'glanceHero',
+          condition: (_, { type } = {}) => type !== 'marketingHero',
         },
       },
     }),
@@ -81,14 +81,14 @@ export const hero: Field = {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'glanceHero'].includes(type),
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'marketingHero'].includes(type),
       },
       relationTo: 'media',
       required: true,
     },
     themeColorField({
       admin: {
-        condition: (_, { type } = {}) => type === 'glanceHero',
+        condition: (_, { type } = {}) => type === 'marketingHero',
       },
     }),
   ],

@@ -69,7 +69,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className={cn('pb-24', hero?.type === 'glanceHero' ? 'pt-0' : 'pt-16')}>
+    <article className={cn('pb-24', hero?.type === 'marketingHero' ? 'pt-0' : 'pt-16')}>
       <PageClient heroType={hero?.type} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

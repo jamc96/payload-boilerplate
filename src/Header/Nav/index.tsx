@@ -8,7 +8,7 @@ import { CMSLink } from '@/components/Link'
 import { cn } from '@/utilities/ui'
 
 const navLinkClassName =
-  'font-body text-sm font-bold text-glance-text transition-colors hover:text-glance-primary'
+  'font-body text-sm font-bold text-site-text transition-colors hover:text-site-primary'
 
 type HeaderNavProps = {
   data: HeaderType
@@ -29,7 +29,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobile = false, onNa
             appearance="inline"
             className={cn(
               navLinkClassName,
-              'border-t border-glance-divider py-[30px] text-base',
+              'border-t border-site-divider py-[30px] text-base',
             )}
             onClick={onNavigate}
           />

@@ -18,7 +18,7 @@ Project-specific names still live in **`docs/FIGMA_PAYLOAD_PROJECT.md`**. This f
 | Frontend CSS | `src/app/(frontend)/globals.css` |
 | E2E | `tests/e2e/`, `playwright.config.ts` |
 | Visual | `tests/visual/`, `playwright.visual.config.ts` |
-| Playwright CLI (optional) | `@playwright/cli` — see [playwright-qa.md](../playwright-qa.md) |
+| Playwright CLI (required) | `@playwright/cli` + `.agents/skills/playwright-cli/` — see [playwright-qa.md](../playwright-qa.md) |
 | Page render | `src/app/(frontend)/[slug]/page.tsx` |
 
 ## Default Payload mapping
@@ -50,5 +50,5 @@ pnpm generate:types
 
 ## Reference implementation
 
-This repo's filled config: [examples/payload-poc-glance.md](../examples/payload-poc-glance.md)  
-Page plan: `docs/GLANCE_HOME_PAGE_PLAN.md`
+This repo's filled config: [examples/example-implementation.md](../examples/example-implementation.md)  
+Page plan: `docs/EXAMPLE_PAGE_PLAN.md`

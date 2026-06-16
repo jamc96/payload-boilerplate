@@ -6,7 +6,7 @@ import { Media } from '@/components/Media'
 
 export const MediaHeroBlock: React.FC<MediaHeroBlockProps> = ({ alt, media }) => {
   return (
-    <section className="bg-glance-bg pb-10" data-testid="block-mediaHero">
+    <section className="bg-site-bg pb-10" data-testid="block-mediaHero">
       <div className="mx-auto w-full max-w-[1200px] px-4 md:px-10">
         {media && typeof media === 'object' && (
           <div className="relative aspect-1120/620 max-h-[830px] w-full overflow-hidden rounded-[30px]">

@@ -2,7 +2,7 @@
 
 Complete reference for access control patterns across collections, fields, and globals.
 
-## At a Glance
+## Overview
 
 | Feature               | Scope                                                     | Returns                | Use Case                           |
 | --------------------- | --------------------------------------------------------- | ---------------------- | ---------------------------------- |

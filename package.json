@@ -1,7 +1,7 @@
 {
-  "name": "payload-poc",
+  "name": "payload-figma-boilerplate",
   "version": "1.0.0",
-  "description": "Website template for Payload",
+  "description": "Payload CMS + Next.js boilerplate with Figma-to-CMS agent workflow, marketing blocks, and Playwright visual QA",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -17,11 +17,18 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed-cli.mts",
-    "seed:fresh": "rm -f payload-poc.db && pnpm seed",
+    "seed:fresh": "rm -f payload.db && pnpm seed",
+    "figma:refs:check": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/check-figma-refs.mts",
+    "cli": "playwright-cli",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
+    "test:debug": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --debug=cli",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
-    "test:visual": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.visual.config.ts",
+    "test:visual": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.visual.config.ts --grep-invert @isolated",
+    "test:visual:sections": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.visual.config.ts --grep \"@sections batch\"",
+    "test:visual:full-page": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.visual.config.ts --grep \"@full-page\"",
+    "test:visual:section": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.visual.config.ts --grep \"@section @isolated\"",
+    "test:visual:live": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test tests/seed.spec.ts --debug=cli",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {

@@ -2,7 +2,7 @@
 
 Run in **Phase 6D** after **per-section QA subagents PASS** ([subagent-strategy.md](subagent-strategy.md)).
 
-Playwright commands, CLI debug, and **Build-VisualTests / QA-Visual** subagents: [playwright-qa.md](playwright-qa.md). Load **Playwright skill** (`~/.cursor/skills/playwright/SKILL.md`) when writing or fixing specs.
+Playwright commands, parallel subagents, and **Build-VisualTests / QA-Visual** roles: [playwright-qa.md](playwright-qa.md). Load `.agents/skills/playwright/SKILL.md` when writing or fixing specs.
 
 Paths and test IDs come from **`docs/FIGMA_PAYLOAD_PROJECT.md`**.
 
@@ -15,6 +15,9 @@ Paths and test IDs come from **`docs/FIGMA_PAYLOAD_PROJECT.md`**.
 
 Do not gate CI on raw Figma pixel equality (font rendering differs).
 
+**PNG baselines and Figma gold masters are local-only** — never commit. Gitignore via `references/playwright/.gitignore` and `references/figma/.gitignore`.  
+**Do commit:** Figma seed assets in `public/media/figma/`, plus `MANIFEST.md` and README files. See [STACK_SETUP.md](STACK_SETUP.md).
+
 ## Required snapshot types
 
 | Snapshot | Scope | Why |
@@ -25,34 +28,47 @@ Do not gate CI on raw Figma pixel equality (font rendering differs).
 
 Viewports: use widths from **project config** (commonly 1280 / 800 / 375).
 
-Total tests: **`(2 + N sections) × N breakpoints`**.
+Total batch tests: **`2 × N breakpoints`** (one section batch + one full-page test per viewport).  
+Optional `@isolated` specs: one navigation each — use only with `pnpm test:visual:section`.
 
-## Suggested file structure
+## File structure (batch-first)
 
 ```
 tests/
+  seed.spec.ts                 # Playwright CLI attach entry (@cli)
+  global/
+    visualGlobalSetup.ts       # seed once before all workers
   visual/
-    {page}.visual.spec.ts
+    full-page.visual.spec.ts   # tag @full-page — one navigation, two snapshots
+    sections/
+      all-sections.visual.spec.ts   # tag @sections batch — one navigation, all sections
+      {testId}.visual.spec.ts       # tag @section @isolated — opt-in only
   helpers/
-    seedPageContent.ts       # name from project config
-    visualPageReady.ts       # goto + fonts + images
+    visualSectionSnapshot.ts   # openHomePage, snapshotSectionOnPage, prepareVisualPage
 references/
-  figma/{page}/{breakpoint}/
-  playwright/{project}/{spec}/
+  figma/{page}/{breakpoint}/   # MANIFEST.md committed; PNGs local only (Phase 0 cache)
+  playwright/{project}/demo-home/   # PNGs local only
 ```
+
+Phase 0 Figma export: [scripts/figma-refs-setup.md](../../../scripts/figma-refs-setup.md) · `pnpm figma:refs:check`
 
 ## Playwright visual config (template)
 
-Adjust `baseURL`, `webServer.command`, DB `workers: 1` if seed is destructive.
+Use **global seed** (not `beforeAll` per file) so workers can run in parallel without SQLite lock.
 
 ```typescript
 export default defineConfig({
   testDir: './tests/visual',
-  workers: 1,
+  globalSetup: './tests/global/visualGlobalSetup.ts',
+  workers: process.env.CI ? 2 : Number(process.env.PLAYWRIGHT_VISUAL_WORKERS ?? 3),
+  fullyParallel: true,
+  timeout: 60_000,
   use: { baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000' },
   expect: {
+    timeout: 15_000,
     toHaveScreenshot: {
-      pathTemplate: '{testDir}/../../references/playwright/{projectName}/{testFileName}/{arg}{ext}',
+      pathTemplate:
+        '{testDir}/../../references/playwright/{projectName}/demo-home/{arg}{ext}',
       maxDiffPixelRatio: 0.02,
       threshold: 0.25,
       animations: 'disabled',
@@ -63,63 +79,88 @@ export default defineConfig({
     { name: 'tablet',  use: { viewport: { width: 800,  height: 900 } } },
     { name: 'mobile',  use: { viewport: { width: 375,  height: 812 } } },
   ],
-  webServer: { command: 'pnpm dev', reuseExistingServer: true, url: 'http://localhost:3000' },
+  webServer: {
+    command: 'pnpm dev',
+    reuseExistingServer: !process.env.CI,
+    url: 'http://localhost:3000',
+  },
 })
 ```
 
-## Test ID convention (configure per project)
+`visualGlobalSetup.ts` calls the project seed helper. Skip when a parent already seeded:
 
-Document in `FIGMA_PAYLOAD_PROJECT.md`:
+```bash
+SKIP_VISUAL_SEED=1 pnpm test:visual
+```
 
-| Entity | Pattern example |
-|--------|-----------------|
-| Header | `site-header` or `{brand}-header` |
-| Hero | `site-hero` |
-| Block | `block-{slug}` |
-| Footer | `site-footer` |
+## Spec patterns
 
-Export array of IDs for the visual spec loop.
-
-## Spec pattern
+**Batch sections** (`tests/visual/sections/all-sections.visual.spec.ts`):
 
 ```typescript
-test.describe.configure({ mode: 'serial' })
-
-test.beforeAll(async () => { await seedPageContent() })
-
-test('full-page snapshot', async ({ page }) => {
-  await preparePage(page, '{route}')
-  await expect(page).toHaveScreenshot('full-page.png', { fullPage: true })
-})
-
-for (const testId of PAGE_SECTION_TEST_IDS) {
-  test(`${testId} snapshot`, async ({ page }) => {
-    await preparePage(page, '{route}')
-    const locator = page.locator(`[data-testid="${testId}"]`)
-    await expect(locator).toBeVisible()
-    await expect(locator).toHaveScreenshot(`${testId}.png`)
+test.describe('Visual @sections batch', () => {
+  test.describe.configure({ mode: 'serial' })
+  test('all section snapshots', async ({ page }) => {
+    await openHomePage(page)
+    for (const testId of SECTION_TEST_IDS) {
+      await test.step(testId, () => snapshotSectionOnPage(page, testId))
+    }
   })
-}
+})
 ```
+
+**Full page** — single navigation, two snapshots via `test.step`.
+
+**Isolated section** (opt-in `@isolated` only): `snapshotPageSection(page, testId)` — full navigation per test.
 
 ## Commands
 
 ```bash
-pnpm test:visual
-pnpm test:visual --update-snapshots
-pnpm test:visual --grep "full-page"
+pnpm test:visual                              # batch specs only (6 tests — fast)
+pnpm test:visual:sections                     # @sections batch
+pnpm test:visual:full-page                    # @full-page
+pnpm test:visual:live                         # CLI attach for agent QA (preferred during build)
+pnpm test:visual:section --grep site-hero   # slow isolated spec when needed
+pnpm test:visual --update-snapshots            # after intentional layout change + QA PASS
+SKIP_VISUAL_SEED=1 pnpm test:visual           # parent already seeded
 ```
+
+## Agent QA — Playwright CLI (preferred during Phase 6)
+
+Faster than running the full visual suite on every subagent:
+
+```bash
+pnpm seed:fresh && pnpm dev
+pnpm test:visual:live          # or: pnpm test:debug tests/seed.spec.ts
+# attach tw-XXXX from output:
+pnpm cli attach tw-XXXX
+pnpm cli goto http://localhost:3000/
+pnpm cli snapshot              # compare vs references/figma/... local PNGs
+```
+
+Compare CLI snapshot + local Figma gold master — do **not** re-export Figma MCP unless design changed.
+
+## Parallel subagent wave (Phase 6D / 6E)
+
+1. **Parent:** `pnpm seed:fresh` once, `pnpm dev` running
+2. **Parallel QA-Visual** (readonly): prefer **`pnpm test:visual:live`** + CLI per section, or compare local `references/figma/` PNGs
+3. **Last:** `SKIP_VISUAL_SEED=1 pnpm test:visual` (batch CI suite)
+
+See [subagent-strategy.md](subagent-strategy.md) and [playwright-qa.md](playwright-qa.md).
 
 ## Figma gold masters
 
-1. `get_screenshot` per section + full desktop frame
-2. Save under `references/figma/{page}/{breakpoint}/`
-3. `MANIFEST.md` — node IDs, date, fileKey
+One-time Phase 0 export — see `scripts/figma-refs-setup.md`. Verify with `pnpm figma:refs:check`.
+
+1. `get_screenshot` / `download_assets` per MANIFEST (single setup agent)
+2. Save under `references/figma/{page}/{breakpoint}/` (local; gitignored PNGs)
+3. `MANIFEST.md` — node IDs, date, fileKey (committed)
+4. **Agents read local PNGs** — refresh only when design changes
 
 ## When gaps look wrong
 
 1. Compare `full-page.png` to live page
-2. Launch **readonly QA subagent for the failing section only** ([subagent-strategy.md](subagent-strategy.md)) — not the agent that built it
+2. Launch **readonly QA subagent for the failing section only** — not the agent that built it
 3. Spacing values: [spacing-patterns.md](spacing-patterns.md)
 4. Fix doubled padding before tweaking internal gaps
-5. Re-run section QA, then update baselines only after intentional layout changes
+5. Re-run section QA, then `--update-snapshots` only after intentional layout changes

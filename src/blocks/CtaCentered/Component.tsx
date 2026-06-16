@@ -2,7 +2,7 @@ import React from 'react'
 
 import type { CtaCenteredBlock as CtaCenteredBlockProps } from '@/payload-types'
 
-import { GlanceButton } from '@/components/GlanceButton'
+import { SiteButton } from '@/components/SiteButton'
 import { SectionHeader } from '@/components/SectionHeader'
 import { SECTION_ANCHORS } from '@/constants/sectionAnchors'
 
@@ -12,7 +12,7 @@ export const CtaCenteredBlock: React.FC<CtaCenteredBlockProps> = ({
 }) => {
   return (
     <section
-      className="border-t border-glance-divider bg-glance-bg pb-[120px] pt-20"
+      className="border-t border-site-divider bg-site-bg pb-[120px] pt-20"
       data-testid="block-ctaCentered"
       id={SECTION_ANCHORS.ctaCentered}
     >
@@ -20,7 +20,7 @@ export const CtaCenteredBlock: React.FC<CtaCenteredBlockProps> = ({
         <div className="flex flex-col items-center gap-10 text-center">
           <SectionHeader className="items-center text-center" data={sectionHeader} />
 
-          <GlanceButton
+          <SiteButton
             {...cta}
             appearance={cta.appearance ?? 'linkout'}
             className="w-full"

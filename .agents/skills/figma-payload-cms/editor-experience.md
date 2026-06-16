@@ -30,7 +30,7 @@ Answer these in the page plan and `docs/FIGMA_PAYLOAD_PROJECT.md`:
 | `admin.description` on blocks | Editors | One sentence: when to use this section | "Logo strip for clients or partners" |
 | Field `label` + `admin.description` | Editors | Plain language + example | "Section label" not "Eyebrow" |
 
-### Block label examples (Glance)
+### Block label examples (Site)
 
 | Code slug | Avoid (dev/Figma) | Prefer (editor) |
 |-----------|-------------------|-----------------|
@@ -67,7 +67,7 @@ Slugs stay unchanged so existing content and tests keep working.
 
 Map values to CSS variables or Tailwind classes in the React component — never inline hex from CMS input.
 
-Same pattern for buttons: `appearance: primary | secondary | linkout` → `GlanceButton` / theme CSS.
+Same pattern for buttons: `appearance: primary | secondary | linkout` → `SiteButton` / theme CSS.
 
 ---
 

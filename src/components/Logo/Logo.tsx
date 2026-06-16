@@ -36,13 +36,13 @@ export const Logo = ({
 
   return (
     <span
-      aria-label="Glance"
+      aria-label="Site"
       className={cn(
-        'font-body text-[30px] font-medium leading-none tracking-[-0.05em] text-glance-text',
+        'font-body text-[30px] font-medium leading-none tracking-[-0.05em] text-site-text',
         className,
       )}
     >
-      Glance
+      Site
     </span>
   )
 }
