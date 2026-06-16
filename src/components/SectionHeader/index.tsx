@@ -25,23 +25,21 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ className, data })
   return (
     <div
       className={cn(
-        'flex flex-col gap-4',
+        'flex flex-col gap-[50px]',
         isCentered ? 'items-center text-center' : 'items-start text-left',
         className,
       )}
     >
       {eyebrow && (
-        <p className="font-caption text-xs uppercase tracking-[0.12em] text-glance-primary">
-          {eyebrow}
-        </p>
+        <p className="font-caption text-[12px] tracking-[-0.12px] text-glance-primary">{eyebrow}</p>
       )}
 
-      <h2 className="font-display text-[40px] leading-[1.1] text-glance-text md:text-[60px]">
+      <h2 className="font-display text-[40px] leading-[0.9] tracking-[-0.03em] text-glance-text md:text-[60px]">
         {heading}
       </h2>
 
       {description && (
-        <p className="max-w-[42rem] font-body text-[15px] leading-relaxed text-glance-muted">
+        <p className="max-w-[42rem] font-body text-[15px] leading-[1.4] tracking-[-0.075px] text-glance-muted">
           {description}
         </p>
       )}

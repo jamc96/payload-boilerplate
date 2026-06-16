@@ -1,169 +1,180 @@
 ---
 name: figma-payload-cms
 description: >-
-  Design-to-CMS workflow integrating Figma MCP, Cursor subagents, and Payload CMS
-  (Next.js Website Template). Use when implementing a Figma page in Payload, mapping
-  Figma sections to blocks/globals, planning phased builds, fixing Figma MCP access,
-  or seeding home pages from figma.com/design URLs.
+  Portable design-to-CMS workflow: Figma MCP, Cursor subagents, Payload CMS.
+  Use when implementing a Figma page in Payload, mapping sections to blocks/globals,
+  phased builds, spacing audit, visual QA, or seeding from figma.com/design URLs.
+  Read docs/FIGMA_PAYLOAD_PROJECT.md in the target repo for project-specific names and paths.
 ---
 
 # Figma + Cursor + Payload CMS
 
-End-to-end workflow: **Figma design → plan doc → phased subagent build → Payload blocks/globals → seed → E2E**.
+Portable workflow (same in every repo):
 
-Also load `.agents/skills/payload/SKILL.md` for Payload API and schema patterns.
+**Figma → plan doc → build subagents (0–5) → spacing audit → polish (6) → QA subagents → visual regression → sign-off**
+
+## Before any work in a repo
+
+1. Read **`docs/FIGMA_PAYLOAD_PROJECT.md`** (from [project-config.template.md](project-config.template.md) if missing)
+2. Read the page plan **`docs/{PAGE}_PAGE_PLAN.md`**
+3. Load Payload skill if present: `.agents/skills/payload/SKILL.md`
+4. Optional adapter: [adapters/payload-website-template.md](adapters/payload-website-template.md)
+
+**Install / share:** [README.md](README.md)
 
 ## Prerequisites
 
 | Tool | Purpose |
 |------|---------|
-| Figma MCP (`plugin-figma-figma`) | `get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets`, `create_new_file` |
-| Payload Website Template | Next.js + `pages` collection, hero group, layout blocks, header/footer globals |
-| Cursor subagents | Parallel phases; keep parent context clean |
+| Figma MCP | `get_metadata`, `get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets` |
+| Payload CMS + frontend | Blocks, globals, hero — paths in project config |
+| Cursor subagents | Parallel build + parallel QA |
+| Playwright | E2E + visual regression (optional but recommended for Phase 6) |
 
-## Phase 0 — Gate (always first)
+## Process overview
 
-**Do not code until:**
-
-1. Figma MCP can read the file (`get_metadata` succeeds)
-2. User approved a written plan (`docs/<PROJECT>_PAGE_PLAN.md`)
-3. Scope questions answered (brand, CMS vs hardcoded, seed strategy)
-
-### Figma URL rules
-
-| URL | MCP |
-|-----|-----|
-| `figma.com/design/:fileKey/...?node-id=X-Y` | ✅ Use fileKey + node `X:Y` |
-| `figma.com/site/...` | ❌ Not supported — get `/design/` URL or duplicate into editable file |
-| Community file, access denied | Use `create_new_file` (org planKey from `whoami`), user pastes frames, use new fileKey |
-
-### Figma MCP sequence (per page/frame)
-
-```
-1. whoami                    → confirm account
-2. get_metadata(nodeId)      → section tree + node IDs
-3. get_variable_defs(node)   → colors, typography tokens
-4. get_design_context(node)  → layout reference (adapt to project stack; do NOT add Tailwind as new dep)
-5. get_screenshot(node)      → visual QA reference
-6. download_assets(node)     → media for seed/public (optional)
+```mermaid
+flowchart TD
+  P0[Phase 0 Gate] --> P1[Phase 1 Discovery]
+  P1 --> P2[Phase 2 Plan + approval]
+  P2 --> P3[Phase 3 Build 0–5]
+  P3 --> P4[Phase 4 Spacing audit]
+  P4 --> P5[Phase 5 Polish 6A–6C]
+  P5 --> P6[Phase 6 QA subagents]
+  P6 --> P7[Phase 7 Visual tests 6D]
+  P7 --> P8[Phase 8 Sign-off 6E]
 ```
 
-Launch a **readonly subagent** for full section inventory if the page is large.
+**Rule:** **Separate subagents for build vs QA.** Builders implement; QA agents read code + Figma → PASS/FAIL + ranked fixes. Parent applies fixes and re-runs tests.
+
+---
+
+## Phase 0 — Gate
+
+Do not code until:
+
+1. Figma MCP reads the file (`get_metadata` succeeds)
+2. User approved `docs/{PAGE}_PAGE_PLAN.md`
+3. `docs/FIGMA_PAYLOAD_PROJECT.md` exists with component names and test IDs
+4. Scope answered (brand, CMS vs hardcoded, seed strategy)
+
+Figma MCP sequence: see [figma-access.md](figma-access.md).
+
+---
 
 ## Phase 1 — Discovery (parallel subagents)
 
-Run two explorations in parallel:
+**Subagent A — Figma:** Sections top→bottom, copy, tokens, breakpoints, **spacing from `get_design_context`**.
 
-**Subagent A — Figma:** Section list top→bottom, copy, tokens, responsive frames (Desktop/Tablet/Mobile), reusable patterns (eyebrow, CTAs, numbered lists).
+**Subagent B — Codebase:** Map to Payload entities using paths from **project config**. Report extend vs net-new blocks.
 
-**Subagent B — Payload:** Read `src/collections/Pages`, `src/blocks/RenderBlocks.tsx`, `src/heros/`, `Header/` + `Footer/` globals, `src/endpoints/seed/home.ts`, `globals.css`. Report extend vs net-new.
+Generic mapping:
 
-### Map Figma → Payload
+| Figma | Payload |
+|-------|---------|
+| Nav | header global |
+| Hero | hero variant (usually not a block) |
+| Sections | layout blocks |
+| Footer | footer global |
 
-| Figma section | Payload entity |
-|---------------|----------------|
-| Nav | `header` global |
-| Hero | `hero` group variant (not a block) |
-| Content sections | `layout` blocks |
-| Footer | `footer` global |
-
-Each section → one block slug unless a close match exists (`content`, `cta`, `mediaBlock`).
+---
 
 ## Phase 2 — Plan document
 
-Write `docs/<NAME>_PAGE_PLAN.md` including:
+Use [plan-template.md](plan-template.md). Store Figma node IDs, field schemas, phases, spacing notes, acceptance criteria, approval gate.
 
-1. Goals / non-goals
-2. Figma fileKey + node reference table
-3. Design tokens (from `get_variable_defs`)
-4. Section → block mapping with **field schemas**
-5. Shared field factories (`sectionHeader`, `iconPicker`, `ctaButton`, `anchorId`)
-6. Build phases + subagent assignments
-7. Seed layout order + acceptance criteria
-8. **Approval gate** — wait for user "go ahead"
+---
 
-Use [plan-template.md](plan-template.md) as starting structure. See [docs/GLANCE_HOME_PAGE_PLAN.md](../../../docs/GLANCE_HOME_PAGE_PLAN.md) for a completed example in this repo.
+## Phase 3 — Build (Phases 0–5, build subagents)
 
-## Phase 3 — Build (subagents + commits)
+| Phase | Scope |
+|-------|--------|
+| 0 | Design tokens, field factories, **shared components from project config** |
+| 1A | Header / footer |
+| 1B | Hero variant |
+| 2 | Blocks (`config` + `Component`) — parallel |
+| 3 | Register blocks, generate types |
+| 4 | Seed + assets |
+| 5 | E2E smoke tests |
 
-**One commit per phase.** User should approve plan before Phase 0 code.
+Use **project config** component names (not hardcoded `Glance*` names).
 
-| Phase | Scope | Subagents |
-|-------|--------|-----------|
-| 0 | Tokens, fonts, field factories, shared UI, CMSLink fixes | 1 |
-| 1A | Header/footer globals + components | 1 |
-| 1B | Hero variant | 1 |
-| 2 | New blocks (`config.ts` + `Component.tsx` each) | N parallel |
-| 3 | Register in `Pages` + `RenderBlocks`, `generate:types` | 1 |
-| 4 | Seed + assets | 1 |
-| 5 | E2E tests | 1 |
-
-### Block pattern (Payload Website Template)
+### Build subagent prompt (template)
 
 ```
-src/blocks/MyBlock/
-  config.ts      → Block slug, interfaceName, fields
-  Component.tsx  → import type from @/payload-types, data-testid="block-{slug}"
-```
-
-Register in `src/collections/Pages/index.ts` and `src/blocks/RenderBlocks.tsx`. Run `pnpm generate:types`.
-
-Reuse: `Media`, `RichText`, `CMSLink`, `link`/`linkGroup`, `container`, `cn()`.
-
-### Subagent prompt template
-
-```
-Project: {path}
-Plan: docs/{PLAN}.md — Phase {N}, section {X}
-Read: .agents/skills/payload/SKILL.md + existing block example (Content/)
+Project: {repo path}
+Config: docs/FIGMA_PAYLOAD_PROJECT.md
+Plan: docs/{PAGE}_PAGE_PLAN.md — Phase {N}
+Skills: .agents/skills/figma-payload-cms/spacing-patterns.md + payload skill if any
 Figma: fileKey {key}, node {id}
-Deliver: listed files only. Do NOT register blocks unless Phase 3.
+Use SectionContainer (or name from config) for horizontal inset.
+Do NOT use symmetric py-* when inner border-t pt-* exists.
 Do NOT commit unless asked.
 ```
 
-## Phase 4 — Seed (common failures)
+---
 
-Admin seed: `POST /next/seed` (requires logged-in user).
+## Phase 4 — Spacing audit (readonly subagents)
 
-CLI seed: `pnpm seed` (`scripts/seed-cli.mts` with `dotenv/config`).
+After functional build, audit **all** section `Component.tsx` files vs Figma `get_design_context`.
 
-**When extending header/footer globals**, reset ALL new fields in seed clear step:
+Split scope: shell | blocks batch A | blocks batch B | cross-cutting (RenderBlocks, globals).
 
-```ts
-await payload.updateGlobal({
-  slug: 'header',
-  req,
-  context: { disableRevalidate: true },
-  data: {
-    navItems: [],
-    logo: null,
-    ctaLink: { type: 'custom', label: '...', url: '...', appearance: 'primary' },
-  },
-})
-```
+Document in plan §5B. Patterns: [spacing-patterns.md](spacing-patterns.md).
 
-**Post updates during seed** must pass `req` + `context: { disableRevalidate: true }` or Next.js revalidation throws outside app context.
+---
 
-**Why old design still shows:** DB has previous `home` page. Run `pnpm seed` after schema changes.
+## Phase 5 — Visual polish (6A–6C, build subagents)
 
-## Phase 5 — QA
+| Sub-phase | Scope |
+|-----------|--------|
+| 6A | Shared components + test helpers (sequential first) |
+| 6B | Header, hero, footer (parallel) |
+| 6C | Blocks in groups of 2–4 (parallel) |
 
-- Hard refresh / restart `pnpm dev` after seed
-- E2E: hero text, `data-testid` per block, header CTA href, anchor ids
-- Live preview in Payload admin
+Apply spacing patterns from Figma MCP values, not guesses.
+
+---
+
+## Phase 6 — QA (readonly subagents)
+
+Never the same agent that built. Check spacing, testids, a11y, visual infra. Return PASS/FAIL + severity.
+
+---
+
+## Phase 7 — Visual regression (6D)
+
+[visual-qa.md](visual-qa.md) — **full-page + per-section** snapshots at breakpoints from project config.
+
+---
+
+## Phase 8 — Sign-off (6E)
+
+Compare `full-page.png` to Figma desktop frame node. Update plan acceptance criteria. Note exceptions in `references/figma/.../MANIFEST.md`.
+
+---
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| "No edit access" on Figma | Share email as Editor; use `/design/` not `/site/`; or `create_new_file` + paste |
-| Seed fails on globals | Clear step missing new global fields |
-| Seed fails on revalidate | Add `req` + `disableRevalidate` on updates |
-| `footer_logo_idx already exists` | Don't run two Payload inits concurrently (E2E + dev); restart dev or reset DB |
-| Empty layout, old hero | Seed didn't complete — run `pnpm seed` |
+| Gaps too large | [spacing-patterns.md](spacing-patterns.md) — doubled outer `py-*` |
+| Section OK alone, wrong on page | `full-page.png` — boundary padding stacks |
+| Visual tests flake | `workers: 1`, serial mode, wait fonts + images |
+| Wrong component names in skill output | Agent skipped `FIGMA_PAYLOAD_PROJECT.md` |
+| Figma access denied | [figma-access.md](figma-access.md) |
 
-## Additional resources
+---
 
-- [plan-template.md](plan-template.md) — plan doc skeleton
-- [payload-patterns.md](payload-patterns.md) — field factories, hero, RenderBlocks
-- [figma-access.md](figma-access.md) — URL parsing, MCP tools, access workflow
+## Reference docs
+
+| Doc | Contents |
+|-----|----------|
+| [README.md](README.md) | Install / share across projects |
+| [project-config.template.md](project-config.template.md) | Per-repo config |
+| [spacing-patterns.md](spacing-patterns.md) | Vertical rhythm |
+| [visual-qa.md](visual-qa.md) | Playwright snapshots |
+| [payload-patterns.md](payload-patterns.md) | Payload CMS conventions |
+| [figma-access.md](figma-access.md) | MCP tools |
+| [plan-template.md](plan-template.md) | Page plan |
+| [examples/](examples/) | Real project references |

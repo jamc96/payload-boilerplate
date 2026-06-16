@@ -3,6 +3,7 @@ import React from 'react'
 import type { ProcessStepsBlock as ProcessStepsBlockProps } from '@/payload-types'
 
 import { GlanceButton } from '@/components/GlanceButton'
+import { GlanceSection } from '@/components/GlanceSection'
 import { cn } from '@/utilities/ui'
 
 const formatStepNumber = (number: string | null | undefined, index: number): string => {
@@ -21,14 +22,14 @@ export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
 }) => {
   return (
     <section
-      className="bg-glance-bg py-[var(--glance-section-padding-y)] lg:py-[var(--glance-section-padding-y-lg)]"
+      className="border-t border-glance-divider bg-glance-bg pb-[120px] pt-20"
       data-testid="block-processSteps"
       id={anchorId || undefined}
     >
-      <div className="mx-auto w-full max-w-[1200px] px-5">
+      <GlanceSection as="div" className="flex flex-col gap-20">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           {headline && (
-            <h2 className="font-display text-[40px] leading-[1.1] text-glance-text md:text-[60px]">
+            <h2 className="font-display text-[40px] leading-[0.9] tracking-[-0.03em] text-glance-text md:text-[60px]">
               {headline}
             </h2>
           )}
@@ -43,14 +44,14 @@ export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
         {steps && steps.length > 0 && (
           <div
             className={cn(
-              'mt-10 -mx-5 flex gap-[var(--glance-column-gap)] overflow-x-auto px-5 pb-2',
+              '-mx-4 flex gap-[var(--glance-column-gap)] overflow-x-auto px-4 pb-2',
               'md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0',
             )}
           >
             {steps.map((step, index) => (
               <article
                 className={cn(
-                  'flex min-w-[17.5rem] shrink-0 flex-col gap-4 border-t border-glance-divider pt-6',
+                  'flex min-w-[240px] shrink-0 flex-col gap-[60px] border-t border-glance-divider pb-5 pt-[60px] pr-[30px]',
                   'md:min-w-0 md:shrink',
                 )}
                 key={step.id || index}
@@ -59,20 +60,24 @@ export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
                   {formatStepNumber(step.number, index)}
                 </p>
 
-                {step.title && (
-                  <h3 className="font-display text-[18px] leading-snug text-glance-text">{step.title}</h3>
-                )}
+                <div className="flex flex-col gap-5">
+                  {step.title && (
+                    <h3 className="font-display text-[18px] leading-snug text-glance-text">
+                      {step.title}
+                    </h3>
+                  )}
 
-                {step.description && (
-                  <p className="font-body text-[15px] leading-relaxed text-glance-muted">
-                    {step.description}
-                  </p>
-                )}
+                  {step.description && (
+                    <p className="font-body text-[15px] leading-relaxed text-glance-muted">
+                      {step.description}
+                    </p>
+                  )}
+                </div>
               </article>
             ))}
           </div>
         )}
-      </div>
+      </GlanceSection>
     </section>
   )
 }

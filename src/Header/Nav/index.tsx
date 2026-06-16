@@ -21,13 +21,16 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobile = false, onNa
 
   if (mobile) {
     return (
-      <nav className="flex flex-col gap-6">
+      <nav className="flex flex-col" data-testid="header-mobile-menu">
         {navItems.map(({ link }, i) => (
           <CMSLink
             key={i}
             {...link}
             appearance="inline"
-            className={cn(navLinkClassName, 'text-base')}
+            className={cn(
+              navLinkClassName,
+              'border-t border-glance-divider py-[30px] text-base',
+            )}
             onClick={onNavigate}
           />
         ))}
@@ -37,16 +40,11 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobile = false, onNa
 
   return (
     <nav
-      className="hidden items-center gap-1 rounded-full bg-white/40 px-2 py-2 backdrop-blur-[15px] md:flex"
+      className="hidden items-center gap-[27px] rounded-[100px] bg-white/40 px-6 py-5 tracking-[-0.35px] backdrop-blur-[15px] md:flex"
       data-testid="header-nav"
     >
       {navItems.map(({ link }, i) => (
-        <CMSLink
-          key={i}
-          {...link}
-          appearance="inline"
-          className={cn(navLinkClassName, 'rounded-full px-4 py-2')}
-        />
+        <CMSLink key={i} {...link} appearance="inline" className={navLinkClassName} />
       ))}
     </nav>
   )

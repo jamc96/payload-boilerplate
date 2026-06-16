@@ -1,6 +1,7 @@
 # Glance Home Page — Implementation Plan
 
-> **Status:** Implemented — Phases 0–5 committed on `main`  
+> **Status:** Phases 0–5 implemented — **Phase 6 visual polish in progress**  
+> **Last audit:** 2026-06-16 — subagents identified 37+ concrete UI gaps vs Figma  
 > **Brand:** Glance (POC; Figma template uses "Area")  
 > **Figma source:** [Modern Product Launch - Payload POC](https://www.figma.com/design/lEM5McyRvPeMRIn4Ce6q0a) (`lEM5McyRvPeMRIn4Ce6q0a`)  
 > **Target route:** `/` → CMS page `slug: home`  
@@ -21,6 +22,15 @@
 - Figma Sites publishing pipeline
 - Production-ready `/contact` page (links only)
 - Replacing Payload admin chrome / AdminBar
+- CI gates on raw Figma pixel equality (font rendering differs; use self-baseline + relaxed Figma compare)
+
+### Phase 6 goals (new)
+
+1. Close the largest visual gaps identified in the subagent audit (typography, spacing, layout structure).
+2. Standardize horizontal padding (`40px` desktop / `16px` mobile) and section rhythm across all blocks.
+3. Add Playwright visual regression per section at 1280 / 800 / 375 viewports.
+4. Store Figma MCP screenshots as design gold masters for side-by-side review.
+5. Target **≤5% pixel diff vs Figma** on desktop section shots (manual sign-off); **≤2% self-baseline** for CI regression.
 
 ---
 
@@ -502,14 +512,20 @@ Globals
 
 ```mermaid
 flowchart TD
-  P0[Phase 0: Foundation] --> P1A[Phase 1A: Header/Footer]
-  P0 --> P1B[Phase 1B: Glance Hero]
-  P0 --> P2[Phase 2: Blocks x8 parallel]
-  P1A --> P3[Phase 3: Integration]
+  P0[Phase 0: Foundation ✅] --> P1A[Phase 1A: Header/Footer ✅]
+  P0 --> P1B[Phase 1B: Glance Hero ✅]
+  P0 --> P2[Phase 2: Blocks x8 ✅]
+  P1A --> P3[Phase 3: Integration ✅]
   P1B --> P3
   P2 --> P3
-  P3 --> P4[Phase 4: Seed + Assets]
-  P4 --> P5[Phase 5: QA + E2E]
+  P3 --> P4[Phase 4: Seed + Assets ✅]
+  P4 --> P5[Phase 5: QA + E2E ✅]
+  P5 --> P6A[Phase 6A: Shared foundations]
+  P6A --> P6B[Phase 6B: Shell polish]
+  P6A --> P6C[Phase 6C: Block polish x4]
+  P6B --> P6D[Phase 6D: Visual regression]
+  P6C --> P6D
+  P6D --> P6E[Phase 6E: Figma compare + sign-off]
 ```
 
 ### Phase 0 — Foundation (1 subagent, sequential first)
@@ -654,6 +670,299 @@ hero: { type: 'glanceHero', headline: 'Browse everything.', media: heroImageId }
 
 **Exit criteria:** E2E passes; major sections visible; admin live preview works.
 
+**Status:** ✅ Complete
+
+---
+
+## 5B. Visual Fidelity Audit (2026-06-16)
+
+Subagents compared live implementation against Figma nodes and plan §2.3/§4. Findings grouped by area — **37+ concrete fixes** ranked by visual impact.
+
+### Audit summary by area
+
+| Area | Subagent | Top issues | Priority fixes |
+|------|----------|------------|----------------|
+| Header / Hero / Footer | [665c016c](665c016c-4cfc-415a-86c7-6b6f359123c5) | Hero headline→bar gap (240px vs 24px); H1 tracking/leading; mobile nav pattern; footer copyright font/color; nav pill spacing | 10 HIGH |
+| Blocks 1–4 | [333258e8](333258e8-fc35-4f81-8a4b-4f833b3d437c) | FeatureSplit uses 80px step numbers instead of inline 15px; ComparisonTable wrong typography; LogoCloud label font; SectionHeader 16px gaps vs 40–50px | 15 ranked |
+| Blocks 5–8 | [14450f89](14450f89-e869-4166-9840-8cb7fc289ab3) | Testimonial square crop vs 550:624 portrait; ProcessSteps 60px internal gaps vs 16px; MediaHero extra vertical padding; CtaCentered missing 300px inset | 12 ranked |
+| Visual QA tooling | [90a9b41c](90a9b41c-82dc-4caa-825c-5d8e06676a3a) | Playwright per-section snapshots + Figma refs in `references/figma/` | Phase 6D |
+
+### Cross-cutting gaps (all sections)
+
+| Issue | Figma spec | Current code | Affected |
+|-------|-----------|--------------|----------|
+| Horizontal padding | 40px desktop / 16px mobile | `px-5` (20px) everywhere | All blocks, hero |
+| Section header stack gap | 40–50px between eyebrow / headline / body | `gap-4` (16px) in SectionHeader | Benefits, FeatureSplit, ComparisonTable, CtaCentered |
+| Headline typography | Crimson 60px, `leading-[0.9]`, `tracking-[-0.03em]` | `leading-[1.1]`, weak tracking | SectionHeader |
+| GlanceButton padding | 22×14px, 6px arrow | 24×12px, 16px arrow | Nav, CTAs |
+| Section top borders | 0.5px `#E9E9E9` on most sections | Missing on Testimonial, ProcessSteps, LogoCloud | Multiple blocks |
+| Container width | 1200px content @ 40px inset | Mixed `.container` + `px-5` | All blocks |
+
+### Top 10 fixes by visual impact (implementation order)
+
+| Rank | Component | Issue | File(s) |
+|------|-----------|-------|---------|
+| 1 | GlanceHero | Headline→green bar gap: Figma 240/140/120px, code 24–40px | `src/heros/GlanceHero/index.tsx` |
+| 2 | GlanceHero | H1: 160px, `leading-[0.9]`, `tracking-[-6.8px]` | `src/heros/GlanceHero/index.tsx` |
+| 3 | FeatureSplit | List uses 64–80px numbers; Figma uses inline 15px bold in horizontal row | `src/blocks/FeatureSplit/Component.tsx` |
+| 4 | ComparisonTable | Feature rows: Roboto Mono 12px black, not DM Sans 15px muted | `src/blocks/ComparisonTable/Component.tsx` |
+| 5 | Header (mobile) | Slide drawer vs Figma expanding bar with dividers + rounded bottom | `src/Header/Component.client.tsx` |
+| 6 | SectionHeader | Stack gap 16px vs Figma 40–50px | `src/components/SectionHeader/index.tsx` |
+| 7 | Footer | Copyright: Roboto Mono 12px `#485C11`, not DM Sans 14px muted | `src/Footer/Component.tsx` |
+| 8 | ProcessSteps | Card `pt-60`, number→title gap 60px; code uses 24px/16px | `src/blocks/ProcessSteps/Component.tsx` |
+| 9 | Testimonial | `aspect-square` vs Figma 550:624 portrait | `src/blocks/Testimonial/Component.tsx` |
+| 10 | HeaderNav | Pill gap 27px, padding 24×20px; code uses 4px gap, 8px padding | `src/Header/Nav/index.tsx` |
+
+### Per-section fix backlog
+
+<details>
+<summary><strong>Header / Nav / Logo / GlanceButton</strong> (10 fixes)</summary>
+
+- Nav zone height: Figma 148px asymmetric (`pt-20 pb-80`); code ~72–96px symmetric
+- Frosted pill: `gap-[27px] px-6 py-5 rounded-[100px] tracking-[-0.35px]`
+- Mobile nav: rebuild as in-place expanding white bar (`rounded-b-[20px]`, item dividers, `py-[30px]`)
+- Logo wordmark: DM Sans Medium 500 + `tracking-[-1.5px]`; footer logo 70px tall
+- GlanceButton: `px-[22px] py-[14px]`, arrow 6×6px
+
+</details>
+
+<details>
+<summary><strong>GlanceHero</strong> (4 fixes)</summary>
+
+- Responsive H1 sizes with exact tracking/leading per breakpoint
+- Headline→bar margins: `mt-[240px] md:mt-[140px] max-md:mt-[120px]`
+- Padding: `px-10 max-md:px-4`; mobile `pt-[120px]` for nav clearance
+- Add `data-testid="glance-hero"` for visual tests
+
+</details>
+
+<details>
+<summary><strong>LogoCloud</strong> (5 fixes)</summary>
+
+- Remove extra `border-t`; padding `py-[50px]`
+- Label: DM Sans 15px muted (not Roboto Mono uppercase)
+- Logo cells: ~154×84px containers with `p-5`
+- Flex-wrap with `gap-x-10 gap-y-5`
+
+</details>
+
+<details>
+<summary><strong>Benefits</strong> (6 fixes)</summary>
+
+- Inner section: `border-t pt-80 pb-60` + outer `pb-120`
+- Card padding `py-10`; internal gaps 24px/20px
+- Icons black 24px (not green Lucide)
+- Hero image fixed `h-[620px] rounded-[30px]`
+
+</details>
+
+<details>
+<summary><strong>FeatureSplit</strong> (6 fixes)</summary>
+
+- **Structural:** horizontal row layout with 15px bold numbers (NOT ProcessSteps-style 80px)
+- Text column: `border-t pt-60 pb-80`
+- Body text black; image `h-[711px]` with optional overlay
+
+</details>
+
+<details>
+<summary><strong>ComparisonTable</strong> (7 fixes)</summary>
+
+- Header band: `border-t border-glance-muted-light py-80 gap-40`
+- Table shell: `rounded-[20px] overflow-x-auto`
+- Highlighted column only: card border + `shadow-[0_2px_8px_rgba(0,0,0,0.08)]`
+- Column headers ~26px medium, `h-96px py-40 px-30`
+- Feature cells: Roboto Mono 12px black
+
+</details>
+
+<details>
+<summary><strong>Testimonial / ProcessSteps / MediaHero / CtaCentered</strong> (12 fixes)</summary>
+
+- Testimonial: portrait aspect, quote column `pl-[50px] border-t`, author title Roboto Mono green
+- ProcessSteps: `pt-[60px] pr-[30px]`, number→title gap 60px, mobile cards 240px wide
+- MediaHero: `pb-10` only (not symmetric 80–120px), `max-h-[830px]`
+- CtaCentered: inner inset `px-[300px] md:px-[100px] max-md:px-4`, gap 40px
+
+</details>
+
+<details>
+<summary><strong>Footer</strong> (4 fixes)</summary>
+
+- Two-row layout with 80px gap between nav and credits
+- Credits row: logo 70px + copyright left + "All Rights Reserved" right
+- Copyright: `font-caption text-[12px] text-glance-primary`
+- Mobile: stack nav links vertically with 27px gap
+
+</details>
+
+---
+
+## 5C. Phase 6 — Visual Polish & Regression (NEW)
+
+```mermaid
+flowchart TD
+  P5[Phase 5: E2E QA ✅] --> P6A[Phase 6A: Shared foundations]
+  P6A --> P6B[Phase 6B: Shell polish parallel]
+  P6A --> P6C[Phase 6C: Blocks polish parallel]
+  P6B --> P6D[Phase 6D: Visual regression setup]
+  P6C --> P6D
+  P6D --> P6E[Phase 6E: Figma compare + sign-off]
+```
+
+### Phase 6A — Shared foundations (1 subagent, sequential first)
+
+**Agent:** `phase-6a-foundations`  
+**Depends on:** Phase 5 complete
+
+| Task | Files | Audit refs |
+|------|-------|------------|
+| Fix SectionHeader spacing + typography | `src/components/SectionHeader/index.tsx` | Cross-cutting #6 |
+| Fix GlanceButton sizing + arrow | `src/components/GlanceButton/index.tsx` | Cross-cutting |
+| Add shared layout wrapper or CSS vars for horizontal inset | `globals.css`, optional `src/components/GlanceSection/index.tsx` | Cross-cutting padding |
+| Add `data-testid="glance-hero"` | `src/heros/GlanceHero/index.tsx` | Visual QA |
+| Extract `seedGlanceHome()` helper | `tests/helpers/seedGlanceHome.ts` | Visual QA |
+
+**Exit criteria:** SectionHeader gaps 40–50px; buttons match Figma 22×14px; consistent `px-10 max-md:px-4 max-w-[1200px]` pattern documented.
+
+---
+
+### Phase 6B — Shell polish (2 parallel subagents)
+
+**Depends on:** Phase 6A
+
+| Subagent | Scope | Key fixes | Files |
+|----------|-------|-----------|-------|
+| `phase-6b-header-footer` | Header, Nav, Footer, Logo | Mobile nav rebuild; pill spacing; footer credits row; logo sizing | `Header/`, `Footer/`, `Logo/` |
+| `phase-6b-hero` | GlanceHero | H1 typography; headline→bar gaps; padding; mobile nav clearance | `src/heros/GlanceHero/` |
+
+**Exit criteria:** Header/footer/hero screenshots at 1280px visually closer to Figma nodes `1:119`, `1:120`, `1:257`.
+
+---
+
+### Phase 6C — Block polish (4 parallel subagents)
+
+**Depends on:** Phase 6A  
+**Can run in parallel** with Phase 6B (no file conflicts).
+
+| Subagent | Blocks | Priority fixes |
+|----------|--------|----------------|
+| `phase-6c-blocks-a` | LogoCloud, Benefits | Label font; logo cell sizing; benefits card padding; section borders |
+| `phase-6c-blocks-b` | FeatureSplit, ComparisonTable | **FeatureSplit list layout rewrite**; table typography + card structure |
+| `phase-6c-blocks-c` | Testimonial, ProcessSteps | Portrait aspect; step spacing 60px; section borders |
+| `phase-6c-blocks-d` | MediaHero, CtaCentered | Reduce MediaHero padding; CtaCentered inner inset |
+
+**Each subagent workflow:**
+
+1. Call Figma MCP `get_screenshot` on section node (desktop frame)
+2. Implement fixes from §5B backlog
+3. Capture Playwright section screenshot at 1280px
+4. Report remaining diff vs Figma (estimate %)
+
+**Exit criteria:** All 8 blocks pass relaxed Figma compare (≤5% pixel diff) OR documented exceptions in `references/figma/MANIFEST.md`.
+
+---
+
+### Phase 6D — Visual regression infrastructure (1 subagent)
+
+**Agent:** `phase-6d-visual-tests`  
+**Depends on:** Phase 6A (can start in parallel with 6B/6C once hero testid exists)
+
+| Task | Files |
+|------|-------|
+| Export Figma section screenshots via MCP | `references/figma/glance-home/{desktop-1280,tablet-800,mobile-375}/` |
+| Create Figma reference manifest | `references/figma/glance-home/MANIFEST.md` |
+| Add Playwright visual test spec | `tests/visual/glance-home.visual.spec.ts` |
+| Configure viewport projects + snapshot paths | `playwright.config.ts` |
+| Optional Figma compare helper | `tests/helpers/figmaCompare.ts` |
+| Add `pnpm test:visual` script | `package.json` |
+
+**Playwright config additions:**
+
+```typescript
+projects: [
+  { name: 'desktop', use: { viewport: { width: 1280, height: 900 } } },
+  { name: 'tablet',  use: { viewport: { width: 800,  height: 900 } } },
+  { name: 'mobile',  use: { viewport: { width: 375,  height: 812 } } },
+],
+expect: {
+  toHaveScreenshot: {
+    pathTemplate: '{testDir}/../references/playwright/{projectName}/{testFileName}/{arg}{ext}',
+    maxDiffPixelRatio: 0.02,
+    threshold: 0.25,
+    animations: 'disabled',
+  },
+},
+```
+
+**Two-tier QA strategy:**
+
+| Tier | Method | Threshold | Purpose |
+|------|--------|-----------|---------|
+| CI regression | Playwright self-baseline `toHaveScreenshot` | ≤2% pixel diff | Catch unintended layout breaks |
+| Design sign-off | Figma MCP refs + optional `getComparator` | ≤5% or manual review | Validate fidelity to design |
+
+**Exit criteria:** `pnpm test:visual` passes; 2 full-page + 11 section snapshots × 3 viewports = 39 checks; Figma refs committed.
+
+---
+
+### Phase 6E — Compare, iterate, sign-off (1 subagent + human review)
+
+**Agent:** `phase-6e-signoff`  
+**Depends on:** Phases 6B, 6C, 6D
+
+| Task | Deliverable |
+|------|-------------|
+| Run full visual suite at 1280 / 800 / 375 | HTML report with diff images |
+| Side-by-side Figma vs live for each section | Annotated diff notes in MANIFEST.md |
+| Fix remaining HIGH-priority gaps from audit | Targeted PR commits |
+| Update acceptance criteria checklist | This plan §10 |
+| Optional: custom `@media (width >= 800px)` for tablet-specific spacing | `globals.css` |
+
+**Exit criteria:** All §10 acceptance criteria checked; visual tests green; ≤3 documented Figma exceptions (e.g. hero device mockup as single image).
+
+---
+
+### Phase 6 subagent prompt template
+
+```
+Project: /Users/jose.mejia/projects/payload-poc
+Plan: docs/GLANCE_HOME_PAGE_PLAN.md — Phase 6{X}, §5B backlog
+Audit: [link to subagent findings in §5B]
+
+Read first:
+- .agents/skills/figma-payload-cms/SKILL.md (get_screenshot workflow)
+- src/components/SectionHeader/index.tsx (Phase 6A output)
+- globals.css (tokens)
+
+Figma file: lEM5McyRvPeMRIn4Ce6q0a
+Figma node: [from Appendix A]
+
+Deliver:
+1. Implement fixes listed in §5B for your scope
+2. Use shared layout pattern: max-w-[1200px] mx-auto px-10 max-md:px-4
+3. After changes, note estimated remaining visual gaps
+
+Visual QA (if 6D complete):
+4. Run: pnpm test:visual --grep "[section-name]"
+5. Compare against references/figma/glance-home/desktop-1280/[section].png
+
+Do NOT commit unless asked.
+```
+
+---
+
+### Phase 6 effort estimate
+
+| Phase | Subagents | Estimate |
+|-------|-----------|----------|
+| 6A Foundations | 1 | ~1–2 hours |
+| 6B Shell (Header/Hero/Footer) | 2 parallel | ~3–4 hours |
+| 6C Blocks (×4 parallel) | 4 | ~3–4 hours wall-clock |
+| 6D Visual tests | 1 | ~2 hours |
+| 6E Sign-off + iteration | 1 | ~2–3 hours |
+| **Total Phase 6** | **9 agent runs** | **~1–1.5 days** |
+
 ---
 
 ## 6. File Tree (net-new / modified)
@@ -709,8 +1018,27 @@ src/
     helpers/lexical.ts               NEW
     glance-*.ts                      NEW (media metadata)
 
-tests/e2e/
-  glance-home.e2e.spec.ts            NEW
+tests/
+  e2e/
+    glance-home.e2e.spec.ts            EXISTING (Phase 5)
+  visual/
+    glance-home.visual.spec.ts         NEW (Phase 6D)
+  helpers/
+    seedGlanceHome.ts                  NEW (Phase 6A)
+    figmaCompare.ts                    NEW (Phase 6D, optional)
+    sections.ts                        NEW (Phase 6D)
+
+references/
+  figma/
+    glance-home/
+      desktop-1280/                    NEW — Figma MCP exports
+      tablet-800/
+      mobile-375/
+      MANIFEST.md
+  playwright/                          NEW — auto-managed baselines
+    desktop/
+    tablet/
+    mobile/
 ```
 
 ---
@@ -721,18 +1049,41 @@ tests/e2e/
 
 | Tool / Skill | Use |
 |--------------|-----|
-| **Figma MCP** (`get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets`) | Design reference, asset export |
+| **Figma MCP** (`get_design_context`, `get_variable_defs`, `get_screenshot`, `download_assets`) | Design reference, asset export, **Phase 6 gold-master screenshots** |
 | **Payload skill** (`.agents/skills/payload/`) | Blocks, fields, hooks, access |
 | **Next.js App Router** | Server components, `getPayload`, draft mode |
 | **Tailwind v4 + shadcn** | Styling (project convention) |
 | **lucide-react** | Icons for iconPicker |
-| **Cursor subagents** | Parallel block implementation |
+| **Cursor subagents** | Parallel block implementation + Phase 6 polish audits |
+| **Playwright `toHaveScreenshot`** | Per-section visual regression (Phase 6D) |
+| **Playwright `getComparator`** | Optional Figma-vs-live pixel diff (Phase 6E) |
+
+### Visual QA workflow (Phase 6)
+
+```
+1. Figma MCP get_screenshot(nodeId) @ 1280 / 800 / 375
+   → references/figma/glance-home/{breakpoint}/{section}.png
+
+2. Subagent implements fixes from §5B backlog
+   → component code changes
+
+3. Playwright: seed → goto → fonts.ready → locator.toHaveScreenshot()
+   → references/playwright/{project}/{section}.png (self-baseline)
+
+4. Optional: getComparator(live, figmaRef) with maxDiffPixelRatio: 0.05
+   → design sign-off report
+
+5. Iterate until ≤2% self-baseline (CI) and ≤5% Figma compare (design)
+```
 
 ### Optional / nice-to-have
 
 | Tool | Use | Needed? |
 |------|-----|---------|
-| Playwright MCP / skill | E2E verification | Already in project via `pnpm test:e2e` |
+| Playwright MCP / skill | E2E + visual verification | **Yes for Phase 6** |
+| Percy / Chromatic / Argos | Cloud VRT with PR comments | No (POC overhead) |
+| lost-pixel | Playwright custom shots | No (sunsetting 2026) |
+| BackstopJS | Scenario runner | No (separate stack) |
 | Figma `generate_figma_design` | Reverse sync code → Figma | No |
 | Storybook | Component isolation | No (POC) |
 | `@next/font` | Font optimization | Yes — via `next/font/google` |
@@ -784,50 +1135,76 @@ Do NOT run generate:types.
 | `/contact` 404 | Acceptable | Link href only |
 | Comparison table duplicate rows | Keep Figma data as-is | May dedupe later |
 | Carousel interaction | Static image only | No JS carousel for POC |
-| iPad mockup in hero | Single uploaded image | Not built as CSS frame |
+| iPad mockup in hero | Single uploaded image | Not built as CSS frame — documented exception in Phase 6E |
 | Existing template blocks | Keep registered | Don't remove `content`, `cta`, etc. |
-| RenderBlocks `my-16` | Likely reduce to per-block padding | Figma uses 120px section gaps |
+| RenderBlocks `my-16` | Reduced to per-block padding | ✅ Done in Phase 3 |
 | Dynamic Tailwind classes | Must safelist in globals.css | Project constraint |
+| FeatureSplit number styling | **Bug:** copied ProcessSteps 80px numbers | Phase 6C fix: inline 15px bold per Figma `1:167` |
+| Tailwind vs Figma breakpoints | `md`=768px, Figma tablet=800px | Consider custom `@media (width >= 800px)` in Phase 6E |
+| Figma vs Chromium rendering | 3–8% inherent pixel diff | CI uses self-baseline (2%); Figma compare relaxed to 5% |
+| Mobile nav pattern | Full rebuild needed for fidelity | Highest-effort Phase 6B item; can defer if scope cut |
 
 ---
 
 ## 10. Acceptance Criteria
 
-- [ ] `/` renders all 9 content sections + header + footer
-- [ ] Every section editable in Payload admin without code changes
-- [ ] Responsive at 1280 / 800 / 375 viewports
-- [ ] Glance colors and fonts match Figma tokens (± reasonable POC tolerance)
-- [ ] CTAs link to `/contact` where designed
-- [ ] In-page nav anchors work (`#benefits`, `#specifications`, `#how-to`, `#contact`)
-- [ ] Live preview updates on save
-- [ ] Seed populates demo content
-- [ ] E2E test confirms hero + blocks render
+### Phase 0–5 (original)
+
+- [x] `/` renders all 9 content sections + header + footer
+- [x] Every section editable in Payload admin without code changes
+- [x] Responsive at 1280 / 800 / 375 viewports
+- [ ] Glance colors and fonts match Figma tokens (± reasonable POC tolerance) — **partial; Phase 6 targets full token alignment**
+- [x] CTAs link to `/contact` where designed
+- [x] In-page nav anchors work (`#benefits`, `#specifications`, `#how-to`, `#contact`)
+- [x] Live preview updates on save
+- [x] Seed populates demo content
+- [x] E2E test confirms hero + blocks render
+
+### Phase 6 — Visual polish (new)
+
+- [x] SectionHeader spacing matches Figma (40–50px stack gaps)
+- [x] Horizontal padding standardized: 40px desktop / 16px mobile across all sections
+- [x] GlanceHero headline→bar gap matches Figma (240/140/120px)
+- [x] FeatureSplit uses inline 15px numbers in horizontal rows (not 80px ProcessSteps style)
+- [x] ComparisonTable typography: Roboto Mono 12px feature labels, highlighted column card
+- [x] Mobile nav matches Figma expanding bar pattern (not slide drawer)
+- [x] Footer credits row: Roboto Mono 12px green copyright, 70px logo, three-column layout
+- [x] `pnpm test:visual` passes — full-page + 11 sections × 3 viewports = 39 snapshots
+- [ ] Figma reference images committed in `references/figma/glance-home/` (MANIFEST ready; PNG export pending)
+- [ ] Each section ≤5% pixel diff vs Figma desktop reference (requires Figma MCP export)
+- [x] Self-baseline regression ≤2% pixel diff on CI
 
 ---
 
 ## 11. Estimated Effort
 
-| Phase | Subagents | Estimate |
-|-------|-----------|----------|
-| 0 Foundation | 1 | ~2–3 hours |
-| 1 Header/Footer + Hero | 2 | ~3–4 hours |
-| 2 Blocks (×8 parallel) | 8 | ~4–6 hours wall-clock |
-| 3 Integration | 1 | ~1 hour |
-| 4 Seed + Assets | 1 | ~2 hours |
-| 5 QA | 1 | ~1–2 hours |
-| **Total** | **14 agent runs** | **~1–2 days** |
+| Phase | Subagents | Estimate | Status |
+|-------|-----------|----------|--------|
+| 0 Foundation | 1 | ~2–3 hours | ✅ Done |
+| 1 Header/Footer + Hero | 2 | ~3–4 hours | ✅ Done |
+| 2 Blocks (×8 parallel) | 8 | ~4–6 hours wall-clock | ✅ Done |
+| 3 Integration | 1 | ~1 hour | ✅ Done |
+| 4 Seed + Assets | 1 | ~2 hours | ✅ Done |
+| 5 QA | 1 | ~1–2 hours | ✅ Done |
+| **6 Visual Polish + Regression** | **9** | **~1–1.5 days** | **Planned** |
+| **Total (Phases 0–6)** | **23 agent runs** | **~2.5–3.5 days** | |
 
 ---
 
 ## 12. Approval Gate
 
-**No code will be written until you approve this plan.**
+### Phase 0–5 — ✅ Approved and implemented
+
+### Phase 6 — Awaiting approval
 
 Reply with:
 
-1. **"Approved"** — proceed with Phase 0, then parallel phases as outlined
-2. **Changes** — section/block naming, scope cuts, or priority adjustments
-3. **Questions** — anything in Section 9 needing your input
+1. **"Approved"** — proceed with Phase 6A (foundations), then parallel 6B/6C, then 6D visual tests
+2. **Priority scope** — e.g. "fix top 10 only" or "blocks only, skip mobile nav rebuild"
+3. **Changes** — adjust thresholds, skip Figma compare, or reorder phases
+4. **Questions** — anything in §5B needing your input
+
+**Recommended start order:** 6A → 6C-blocks-b (FeatureSplit + ComparisonTable — biggest visual wins) → 6B-hero → 6D (visual tests) → iterate
 
 ---
 
@@ -850,5 +1227,10 @@ Reply with:
 
 ## Appendix B — Subagent Analysis Sources
 
-- Figma deep analysis: subagent `013543a2-e2c3-4f30-a4f0-c657ed9ec258`
-- Payload build process: subagent `044f3d0c-7ae7-4129-af4c-a483c1a989b9`
+- Figma deep analysis (original): subagent `013543a2-e2c3-4f30-a4f0-c657ed9ec258`
+- Payload build process (original): subagent `044f3d0c-7ae7-4129-af4c-a483c1a989b9`
+- **Phase 6 visual fidelity audits (2026-06-16):**
+  - Header / Hero / Footer: [665c016c-4cfc-415a-86c7-6b6f359123c5](665c016c-4cfc-415a-86c7-6b6f359123c5)
+  - Blocks LogoCloud–ComparisonTable: [333258e8-fc35-4f81-8a4b-4f833b3d437c](333258e8-fc35-4f81-8a4b-4f833b3d437c)
+  - Blocks Testimonial–CtaCentered: [14450f89-e869-4166-9840-8cb7fc289ab3](14450f89-e869-4166-9840-8cb7fc289ab3)
+  - Visual QA tooling research: [90a9b41c-82dc-4caa-825c-5d8e06676a3a](90a9b41c-82dc-4caa-825c-5d8e06676a3a)

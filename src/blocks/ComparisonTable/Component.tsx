@@ -4,6 +4,7 @@ import React from 'react'
 import type { ComparisonTableBlock as ComparisonTableBlockProps } from '@/payload-types'
 
 import { GlanceButton } from '@/components/GlanceButton'
+import { GlanceSection } from '@/components/GlanceSection'
 import { SectionHeader, type SectionHeaderData } from '@/components/SectionHeader'
 import { cn } from '@/utilities/ui'
 
@@ -19,19 +20,19 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
 
   return (
     <section
-      className="bg-glance-bg py-[var(--glance-section-padding-y)] lg:py-[var(--glance-section-padding-y-lg)]"
+      className="border-t border-glance-muted-light bg-glance-bg pb-[120px] pt-20"
       data-testid="block-comparisonTable"
       id={anchorId || undefined}
     >
-      <div className="mx-auto w-full max-w-[1200px] px-5">
-        <div className="flex flex-col items-center gap-6 text-center">
+      <GlanceSection as="div" className="flex flex-col gap-10">
+        <div className="flex flex-col items-center gap-10 text-center">
           <SectionHeader className="w-full" data={centeredHeader} />
 
           <GlanceButton {...cta} />
         </div>
 
         {columns && columns.length > 0 && (
-          <div className="-mx-5 mt-10 overflow-x-auto px-5 pb-2 md:mt-12">
+          <div className="-mx-4 overflow-x-auto rounded-[20px] px-4 pb-2 md:mx-0 md:px-0 md:pb-0">
             <div
               className="flex w-max min-w-full gap-[var(--glance-column-gap)] md:grid md:w-full"
               style={
@@ -44,43 +45,34 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
               {columns.map((column, columnIndex) => (
                 <article
                   className={cn(
-                    'flex w-[17.5rem] shrink-0 flex-col rounded-[var(--glance-radius-table)] md:w-auto md:shrink',
-                    column.highlighted
-                      ? 'bg-glance-bg px-4 py-6 shadow-[0_4px_24px_rgba(0,0,0,0.08)] md:px-5 md:py-8'
-                      : 'px-2 py-4 md:px-3 md:py-6',
+                    'flex w-[17.5rem] shrink-0 flex-col md:w-auto md:shrink',
+                    column.highlighted &&
+                      'rounded-[20px] border border-glance-divider bg-white shadow-[0_2px_8px_rgba(0,0,0,0.08)]',
                   )}
                   key={column.id || columnIndex}
                 >
                   {column.name && (
-                    <h3
-                      className={cn(
-                        'border-b border-glance-muted-light pb-4 font-body text-sm font-bold text-glance-text',
-                        column.highlighted && 'pb-5',
-                      )}
-                    >
+                    <h3 className="flex h-24 items-center border-b border-glance-muted-light px-[30px] py-10 font-body text-[26px] font-medium text-glance-text">
                       {column.name}
                     </h3>
                   )}
 
-                  <ul className="mt-4 flex flex-col">
+                  <ul className="flex flex-col">
                     {(column.features || []).map((feature, featureIndex) => (
                       <li
-                        className={cn(
-                          'flex items-start gap-3 border-b border-glance-divider py-4 font-body text-[15px] leading-snug text-glance-muted last:border-b-0',
-                          column.highlighted && 'py-5',
-                        )}
+                        className="flex items-start gap-2 px-[30px] py-8 font-caption text-[12px] leading-snug text-glance-text"
                         key={feature.id || featureIndex}
                       >
                         {feature.included ? (
                           <Check
                             aria-hidden
-                            className="mt-0.5 size-4 shrink-0 text-glance-primary"
+                            className="mt-0.5 size-3 shrink-0 text-glance-primary"
                             strokeWidth={2.5}
                           />
                         ) : (
                           <X
                             aria-hidden
-                            className="mt-0.5 size-4 shrink-0 text-glance-muted-light"
+                            className="mt-0.5 size-3 shrink-0 text-glance-muted-light"
                             strokeWidth={2.5}
                           />
                         )}
@@ -94,7 +86,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </GlanceSection>
     </section>
   )
 }

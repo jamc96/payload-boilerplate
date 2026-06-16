@@ -10,14 +10,23 @@ interface Props {
   loading?: 'lazy' | 'eager'
   priority?: 'auto' | 'high' | 'low'
   resource?: MediaType | number | null
+  size?: 'header' | 'footer'
 }
 
-export const Logo = ({ className, loading = 'lazy', priority, resource }: Props) => {
+export const Logo = ({
+  className,
+  loading = 'lazy',
+  priority,
+  resource,
+  size = 'header',
+}: Props) => {
+  const imageHeightClass = size === 'footer' ? 'h-[70px]' : 'h-8'
+
   if (resource && typeof resource === 'object') {
     return (
       <Media
         htmlElement={null}
-        imgClassName={cn('h-8 w-auto', className)}
+        imgClassName={cn(imageHeightClass, 'w-auto', className)}
         loading={loading}
         priority={priority === 'high'}
         resource={resource}
@@ -29,7 +38,7 @@ export const Logo = ({ className, loading = 'lazy', priority, resource }: Props)
     <span
       aria-label="Glance"
       className={cn(
-        'font-body text-[30px] font-bold leading-none tracking-tight text-glance-text',
+        'font-body text-[30px] font-medium leading-none tracking-[-0.05em] text-glance-text',
         className,
       )}
     >

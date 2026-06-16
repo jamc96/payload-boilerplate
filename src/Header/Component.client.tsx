@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { GlanceButton } from '@/components/GlanceButton'
+import { GlanceSection } from '@/components/GlanceSection'
 import { Logo } from '@/components/Logo/Logo'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { cn } from '@/utilities/ui'
@@ -39,9 +40,20 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   }, [pathname])
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    if (!mobileOpen) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false)
+      }
+    }
+
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', onKeyDown)
+
     return () => {
       document.body.style.overflow = ''
+      document.removeEventListener('keydown', onKeyDown)
     }
   }, [mobileOpen])
 
@@ -49,64 +61,68 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="relative z-20 bg-glance-bg"
+      className="relative z-20 bg-glance-bg pt-5 pb-20"
       data-testid="glance-header"
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <div className="container relative flex items-center justify-between py-6 md:py-8">
-        <Link className="relative z-10 shrink-0" href="/">
-          <Logo loading="eager" priority="high" resource={data?.logo} />
-        </Link>
-
-        <div className="pointer-events-none absolute inset-x-0 hidden justify-center md:flex">
-          <div className="pointer-events-auto">
-            <HeaderNav data={data} />
-          </div>
-        </div>
-
-        <div className="relative z-10 hidden shrink-0 md:block">
-          {ctaLink && <GlanceButton {...ctaLink} appearance={ctaLink.appearance ?? 'linkout'} />}
-        </div>
-
-        <button
-          aria-expanded={mobileOpen}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          className="relative z-10 inline-flex items-center justify-center rounded-full p-2 text-glance-text md:hidden"
-          onClick={() => setMobileOpen((open) => !open)}
-          type="button"
+      <GlanceSection>
+        <div
+          className={cn(
+            'relative md:static',
+            mobileOpen &&
+              'rounded-b-[20px] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.08)] md:rounded-none md:bg-transparent md:shadow-none',
+          )}
         >
-          {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-        </button>
-      </div>
+          <div className="relative flex items-center justify-between">
+            <Link className="relative z-10 shrink-0" href="/">
+              <Logo loading="eager" priority="high" resource={data?.logo} />
+            </Link>
 
-      <div
-        className={cn(
-          'fixed inset-0 z-30 bg-black/20 backdrop-blur-sm transition-opacity md:hidden',
-          mobileOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        )}
-        onClick={() => setMobileOpen(false)}
-        role="presentation"
-      />
+            <div className="pointer-events-none absolute inset-x-0 hidden justify-center md:flex">
+              <div className="pointer-events-auto">
+                <HeaderNav data={data} />
+              </div>
+            </div>
 
-      <div
-        className={cn(
-          'fixed inset-x-0 top-0 z-40 border-b border-glance-divider bg-glance-bg p-6 pt-24 transition-transform duration-300 ease-out md:hidden',
-          mobileOpen ? 'translate-y-0' : '-translate-y-full',
-        )}
-        data-testid="header-mobile-drawer"
-      >
-        <HeaderNav data={data} mobile onNavigate={() => setMobileOpen(false)} />
-        {ctaLink && (
-          <div className="mt-8">
-            <GlanceButton
-              {...ctaLink}
-              appearance={ctaLink.appearance ?? 'linkout'}
-              className="w-full"
-              fullWidth
-            />
+            <div className="relative z-10 hidden shrink-0 md:block">
+              {ctaLink && <GlanceButton {...ctaLink} appearance={ctaLink.appearance ?? 'linkout'} />}
+            </div>
+
+            <button
+              aria-controls="header-mobile-menu"
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              className="relative z-10 inline-flex items-center justify-center rounded-full p-2 text-glance-text md:hidden"
+              onClick={() => setMobileOpen((open) => !open)}
+              type="button"
+            >
+              {mobileOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+            </button>
           </div>
-        )}
-      </div>
+
+          <div
+            className={cn(
+              'grid transition-[grid-template-rows] duration-300 ease-out md:hidden',
+              mobileOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+            )}
+            id="header-mobile-menu"
+          >
+            <div className="overflow-hidden">
+              <HeaderNav data={data} mobile onNavigate={() => setMobileOpen(false)} />
+              {ctaLink && (
+                <div className="border-t border-glance-divider py-[30px]">
+                  <GlanceButton
+                    {...ctaLink}
+                    appearance={ctaLink.appearance ?? 'linkout'}
+                    className="w-full"
+                    fullWidth
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </GlanceSection>
     </header>
   )
 }

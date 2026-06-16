@@ -72,7 +72,7 @@ export const GlanceButton: React.FC<GlanceButtonProps> = (props) => {
   return (
     <Link
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-[1000px] px-6 py-3 font-body text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-4',
+        'inline-flex items-center justify-center gap-0.5 rounded-[1000px] px-[22px] py-[14px] font-body text-[14px] font-bold tracking-[-0.35px] transition-colors focus-visible:outline-none focus-visible:ring-4',
         appearanceClasses[resolvedAppearance],
         fullWidth && 'w-full',
         className,
@@ -81,7 +81,7 @@ export const GlanceButton: React.FC<GlanceButtonProps> = (props) => {
       {...newTabProps}
     >
       <span>{label}</span>
-      {showArrow && <ArrowUpRight aria-hidden className="size-4 shrink-0" />}
+      {showArrow && <ArrowUpRight aria-hidden className="size-1.5 shrink-0" />}
     </Link>
   )
 }

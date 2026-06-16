@@ -12,12 +12,12 @@ export const CtaCenteredBlock: React.FC<CtaCenteredBlockProps> = ({
 }) => {
   return (
     <section
-      className="border-t border-glance-divider bg-glance-bg py-[120px]"
+      className="border-t border-glance-divider bg-glance-bg pb-[120px] pt-20"
       data-testid="block-ctaCentered"
       id={anchorId || undefined}
     >
-      <div className="mx-auto w-full max-w-[1200px] px-5">
-        <div className="flex flex-col items-center gap-8 text-center">
+      <div className="mx-auto w-full max-w-[1200px] px-4 md:px-[100px] xl:px-[300px]">
+        <div className="flex flex-col items-center gap-10 text-center">
           <SectionHeader className="items-center text-center" data={sectionHeader} />
 
           <GlanceButton

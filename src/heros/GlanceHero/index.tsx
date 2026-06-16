@@ -2,24 +2,22 @@ import React from 'react'
 
 import type { Page } from '@/payload-types'
 
+import { GlanceSection } from '@/components/GlanceSection'
 import { Media } from '@/components/Media'
 
 export const GlanceHero: React.FC<Page['hero']> = ({ backgroundColor, headline, media }) => {
   const barColor = backgroundColor || '#8E9C78'
 
   return (
-    <section className="bg-glance-bg pt-8 md:pt-12" data-theme="light">
-      <div className="mx-auto w-full max-w-[1200px] px-5">
+    <section className="bg-glance-bg max-md:pt-[120px]" data-testid="glance-hero" data-theme="light">
+      <GlanceSection as="div" className="flex flex-col gap-[120px] md:gap-[140px] xl:gap-[240px]">
         {headline && (
-          <h1 className="font-display text-[clamp(2.5rem,12vw,10rem)] leading-[0.95] tracking-[-0.02em] text-glance-text">
+          <h1 className="font-display text-[72px] leading-[0.9] tracking-[-3px] text-glance-text md:text-[100px] md:tracking-[-4.25px] xl:text-[160px] xl:tracking-[-6.8px]">
             {headline}
           </h1>
         )}
         {media && typeof media === 'object' && (
-          <div
-            className="mt-6 overflow-hidden rounded-[30px] md:mt-10"
-            style={{ backgroundColor: barColor }}
-          >
+          <div className="overflow-hidden rounded-[30px]" style={{ backgroundColor: barColor }}>
             <div className="relative w-full">
               <Media
                 className="relative w-full"
@@ -30,7 +28,7 @@ export const GlanceHero: React.FC<Page['hero']> = ({ backgroundColor, headline, 
             </div>
           </div>
         )}
-      </div>
+      </GlanceSection>
     </section>
   )
 }

@@ -14,7 +14,7 @@ figma.com/site/:fileKey/                     →  NOT supported — get /design/
 |------|-----|
 | `whoami` | Account email, plan keys |
 | `get_metadata` | Section tree (node IDs) |
-| `get_design_context` | Reference layout + screenshot |
+| `get_design_context` | Reference layout + screenshot; **extract `gap-*`, `pt-*`, `pb-*` for spacing** |
 | `get_variable_defs` | Design tokens |
 | `get_screenshot` | Visual QA |
 | `download_assets` | Images for seed |
@@ -33,4 +33,6 @@ Only per-file access via fileKey. No "browse my Figma files" tool.
 
 ## Design-to-code note
 
-`get_design_context` returns React+Tailwind **reference only**. Adapt to project's stack (Payload template uses Tailwind v4 + shadcn already).
+`get_design_context` returns React+Tailwind **reference only**. Adapt to the target project's stack and component names from `docs/FIGMA_PAYLOAD_PROJECT.md`.
+
+**Spacing:** Parse MCP output (`gap-[Npx]`, `pt-[Npx]`, `pb-[Npx]`) → [spacing-patterns.md](spacing-patterns.md). Values vary by design; process is the same across projects.

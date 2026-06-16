@@ -10,6 +10,8 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { cn } from '@/utilities/ui'
+
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -67,7 +69,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { hero, layout } = page
 
   return (
-    <article className="pt-16 pb-24">
+    <article className={cn('pb-24', hero?.type === 'glanceHero' ? 'pt-0' : 'pt-16')}>
       <PageClient heroType={hero?.type} />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

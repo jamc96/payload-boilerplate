@@ -168,10 +168,15 @@
   --glance-content-max: 75rem;
   --glance-section-padding-y: 5rem;
   --glance-section-padding-y-lg: 7.5rem;
+  --glance-section-pt: 5rem;
+  --glance-section-pb: 7.5rem;
+  --glance-gap-stack: 3.125rem;
   --glance-radius-image: 1.875rem;
   --glance-radius-button: 62.5rem;
   --glance-radius-table: 1.25rem;
   --glance-column-gap: 1.25rem;
+  --glance-inset-x: 1rem;
+  --glance-inset-x-md: 2.5rem;
 }
 
 [data-theme='dark'] {
