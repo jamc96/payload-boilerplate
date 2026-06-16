@@ -202,15 +202,26 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
+  await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
+      context: {
+        disableRevalidate: true,
+      },
+      data: home({
+        heroImage: imageHomeDoc,
+        image1: image1Doc,
+        image2: image2Doc,
+        image3: image3Doc,
+      }),
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
       data: contactPageData({ contactForm: contactForm }),
     }),
   ])
@@ -220,56 +231,80 @@ export const seed = async ({
   await Promise.all([
     payload.updateGlobal({
       slug: 'header',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {
             link: {
               type: 'custom',
-              label: 'Posts',
-              url: '/posts',
+              label: 'Benefits',
+              url: '#benefits',
             },
           },
           {
             link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
+              type: 'custom',
+              label: 'Specifications',
+              url: '#specifications',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'How-to',
+              url: '#how-to',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Contact Us',
+              url: '/contact',
             },
           },
         ],
+        ctaLink: {
+          type: 'custom',
+          appearance: 'primary',
+          label: 'Learn More',
+          url: '/contact',
+        },
       },
     }),
     payload.updateGlobal({
       slug: 'footer',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {
             link: {
               type: 'custom',
-              label: 'Admin',
-              url: '/admin',
+              label: 'Benefits',
+              url: '#benefits',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/3.x/templates/website',
+              label: 'Specifications',
+              url: '#specifications',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
+              label: 'How-to',
+              url: '#how-to',
             },
           },
         ],
+        copyrightName: 'Glance',
+        year: 2025,
+        legalText: 'All Rights Reserved',
       },
     }),
   ])
