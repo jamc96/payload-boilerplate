@@ -5,21 +5,49 @@ import React from 'react'
 import type { Header as HeaderType } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
-import Link from 'next/link'
-import { SearchIcon } from 'lucide-react'
+import { cn } from '@/utilities/ui'
 
-export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+const navLinkClassName =
+  'font-body text-sm font-bold text-glance-text transition-colors hover:text-glance-primary'
+
+type HeaderNavProps = {
+  data: HeaderType
+  mobile?: boolean
+  onNavigate?: () => void
+}
+
+export const HeaderNav: React.FC<HeaderNavProps> = ({ data, mobile = false, onNavigate }) => {
   const navItems = data?.navItems || []
 
+  if (mobile) {
+    return (
+      <nav className="flex flex-col gap-6">
+        {navItems.map(({ link }, i) => (
+          <CMSLink
+            key={i}
+            {...link}
+            appearance="inline"
+            className={cn(navLinkClassName, 'text-base')}
+            onClick={onNavigate}
+          />
+        ))}
+      </nav>
+    )
+  }
+
   return (
-    <nav className="flex gap-3 items-center">
-      {navItems.map(({ link }, i) => {
-        return <CMSLink key={i} {...link} appearance="link" />
-      })}
-      <Link href="/search">
-        <span className="sr-only">Search</span>
-        <SearchIcon className="w-5 text-primary" />
-      </Link>
+    <nav
+      className="hidden items-center gap-1 rounded-full bg-white/40 px-2 py-2 backdrop-blur-[15px] md:flex"
+      data-testid="header-nav"
+    >
+      {navItems.map(({ link }, i) => (
+        <CMSLink
+          key={i}
+          {...link}
+          appearance="inline"
+          className={cn(navLinkClassName, 'rounded-full px-4 py-2')}
+        />
+      ))}
     </nav>
   )
 }

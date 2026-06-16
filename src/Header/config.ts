@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { ctaButton } from '@/fields/ctaButton'
 import { link } from '@/fields/link'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
@@ -9,6 +10,11 @@ export const Header: GlobalConfig = {
     read: () => true,
   },
   fields: [
+    {
+      name: 'logo',
+      type: 'upload',
+      relationTo: 'media',
+    },
     {
       name: 'navItems',
       type: 'array',
@@ -25,6 +31,7 @@ export const Header: GlobalConfig = {
         },
       },
     },
+    ctaButton({ name: 'ctaLink' }),
   ],
   hooks: {
     afterChange: [revalidateHeader],

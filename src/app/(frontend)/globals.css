@@ -48,6 +48,8 @@
 @source inline("text-glance-muted-light");
 @source inline("text-glance-on-primary");
 @source inline("border-glance-divider");
+@source inline("bg-white/40");
+@source inline("backdrop-blur-[15px]");
 @source inline("font-display");
 @source inline("font-body");
 @source inline("font-caption");

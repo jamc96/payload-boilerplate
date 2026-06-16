@@ -10,6 +10,11 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
+      name: 'logo',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
@@ -24,6 +29,20 @@ export const Footer: GlobalConfig = {
           RowLabel: '@/Footer/RowLabel#RowLabel',
         },
       },
+    },
+    {
+      name: 'copyrightName',
+      type: 'text',
+      label: 'Copyright name',
+    },
+    {
+      name: 'year',
+      type: 'number',
+    },
+    {
+      name: 'legalText',
+      type: 'text',
+      label: 'Legal text',
     },
   ],
   hooks: {
