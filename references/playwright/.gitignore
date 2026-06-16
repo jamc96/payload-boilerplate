@@ -1,0 +1,4 @@
+# Playwright self-baselines — local only, never commit
+*
+!.gitignore
+!README.md

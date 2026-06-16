@@ -1,0 +1,6 @@
+# Figma gold-master screenshots — local only, never commit
+# Commit MANIFEST.md and .gitkeep in subfolders; export PNGs in Phase 0 locally
+*
+!.gitignore
+!**/.gitkeep
+!**/MANIFEST.md
