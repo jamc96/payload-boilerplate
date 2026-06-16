@@ -1,6 +1,6 @@
 # Glance Home Page — Implementation Plan
 
-> **Status:** Draft — awaiting approval before coding  
+> **Status:** Implemented — Phases 0–5 committed on `main`  
 > **Brand:** Glance (POC; Figma template uses "Area")  
 > **Figma source:** [Modern Product Launch - Payload POC](https://www.figma.com/design/lEM5McyRvPeMRIn4Ce6q0a) (`lEM5McyRvPeMRIn4Ce6q0a`)  
 > **Target route:** `/` → CMS page `slug: home`  
