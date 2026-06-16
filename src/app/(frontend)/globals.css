@@ -36,6 +36,34 @@
 @source inline("bg-success/30");
 @source inline("border-warning");
 @source inline("bg-warning/30");
+@source inline("bg-glance-primary");
+@source inline("bg-glance-primary/90");
+@source inline("bg-glance-primary-light");
+@source inline("bg-glance-primary-light/90");
+@source inline("bg-glance-mid-green");
+@source inline("bg-glance-bg");
+@source inline("text-glance-primary");
+@source inline("text-glance-text");
+@source inline("text-glance-muted");
+@source inline("text-glance-muted-light");
+@source inline("text-glance-on-primary");
+@source inline("border-glance-divider");
+@source inline("font-display");
+@source inline("font-body");
+@source inline("font-caption");
+@source inline("rounded-[1000px]");
+@source inline("rounded-[30px]");
+@source inline("rounded-[20px]");
+@source inline("text-[12px]");
+@source inline("text-[14px]");
+@source inline("text-[15px]");
+@source inline("text-[18px]");
+@source inline("text-[40px]");
+@source inline("text-[60px]");
+@source inline("text-[64px]");
+@source inline("text-[80px]");
+@source inline("max-w-[1200px]");
+@source inline("max-w-[42rem]");
 
 @theme {
   --breakpoint-sm: 40rem;
@@ -45,6 +73,9 @@
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-crimson-text), serif;
+  --font-body: var(--font-dm-sans), sans-serif;
+  --font-caption: var(--font-roboto-mono), monospace;
 }
 
 @layer utilities {
@@ -123,6 +154,22 @@
   --success: oklch(78% 0.08 200deg);
   --warning: oklch(89% 0.1 75deg);
   --error: oklch(75% 0.15 25deg);
+  --glance-primary: #485c11;
+  --glance-primary-light: #dfecc6;
+  --glance-mid-green: #8e9c78;
+  --glance-text: #000000;
+  --glance-muted: #6f6f6f;
+  --glance-muted-light: #929292;
+  --glance-divider: #e9e9e9;
+  --glance-bg: #ffffff;
+  --glance-on-primary: #ffffff;
+  --glance-content-max: 75rem;
+  --glance-section-padding-y: 5rem;
+  --glance-section-padding-y-lg: 7.5rem;
+  --glance-radius-image: 1.875rem;
+  --glance-radius-button: 62.5rem;
+  --glance-radius-table: 1.25rem;
+  --glance-column-gap: 1.25rem;
 }
 
 [data-theme='dark'] {
@@ -203,6 +250,15 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+  --color-glance-primary: var(--glance-primary);
+  --color-glance-primary-light: var(--glance-primary-light);
+  --color-glance-mid-green: var(--glance-mid-green);
+  --color-glance-text: var(--glance-text);
+  --color-glance-muted: var(--glance-muted);
+  --color-glance-muted-light: var(--glance-muted-light);
+  --color-glance-divider: var(--glance-divider);
+  --color-glance-bg: var(--glance-bg);
+  --color-glance-on-primary: var(--glance-on-primary);
 }
 
 @layer base {
