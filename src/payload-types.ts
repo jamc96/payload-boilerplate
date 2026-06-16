@@ -203,7 +203,21 @@ export interface Page {
     media?: (number | null) | Media;
     backgroundColor?: string | null;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | LogoCloudBlock
+    | BenefitsBlock
+    | FeatureSplitBlock
+    | ComparisonTableBlock
+    | TestimonialBlock
+    | ProcessStepsBlock
+    | MediaHeroBlock
+    | CtaCenteredBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -785,6 +799,254 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoCloudBlock".
+ */
+export interface LogoCloudBlock {
+  label?: string | null;
+  logos?:
+    | {
+        image: number | Media;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'logoCloud';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BenefitsBlock".
+ */
+export interface BenefitsBlock {
+  sectionHeader: {
+    eyebrow?: string | null;
+    heading: string;
+    description?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  items?:
+    | {
+        icon: 'cable' | 'earth' | 'user' | 'barChart';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  image: number | Media;
+  /**
+   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'benefits';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureSplitBlock".
+ */
+export interface FeatureSplitBlock {
+  sectionHeader: {
+    eyebrow?: string | null;
+    heading: string;
+    description?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  items?:
+    | {
+        number?: string | null;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  cta: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the button should be rendered.
+     */
+    appearance?: ('primary' | 'secondary' | 'linkout') | null;
+  };
+  image: number | Media;
+  imagePosition?: ('left' | 'right') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureSplit';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComparisonTableBlock".
+ */
+export interface ComparisonTableBlock {
+  sectionHeader: {
+    eyebrow?: string | null;
+    heading: string;
+    description?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  cta: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the button should be rendered.
+     */
+    appearance?: ('primary' | 'secondary' | 'linkout') | null;
+  };
+  columns?:
+    | {
+        name: string;
+        highlighted?: boolean | null;
+        features?:
+          | {
+              included?: boolean | null;
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'comparisonTable';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialBlock".
+ */
+export interface TestimonialBlock {
+  image: number | Media;
+  quote: string;
+  authorName: string;
+  authorTitle?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonial';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProcessStepsBlock".
+ */
+export interface ProcessStepsBlock {
+  headline: string;
+  cta: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the button should be rendered.
+     */
+    appearance?: ('primary' | 'secondary' | 'linkout') | null;
+  };
+  steps?:
+    | {
+        number?: string | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'processSteps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaHeroBlock".
+ */
+export interface MediaHeroBlock {
+  media: number | Media;
+  alt?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaCenteredBlock".
+ */
+export interface CtaCenteredBlock {
+  sectionHeader: {
+    eyebrow?: string | null;
+    heading: string;
+    description?: string | null;
+    align?: ('left' | 'center') | null;
+  };
+  cta: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the button should be rendered.
+     */
+    appearance?: ('primary' | 'secondary' | 'linkout') | null;
+    fullWidth?: boolean | null;
+  };
+  /**
+   * Optional HTML id for in-page navigation (e.g. benefits → #benefits).
+   */
+  anchorId?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ctaCentered';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1093,6 +1355,14 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        logoCloud?: T | LogoCloudBlockSelect<T>;
+        benefits?: T | BenefitsBlockSelect<T>;
+        featureSplit?: T | FeatureSplitBlockSelect<T>;
+        comparisonTable?: T | ComparisonTableBlockSelect<T>;
+        testimonial?: T | TestimonialBlockSelect<T>;
+        processSteps?: T | ProcessStepsBlockSelect<T>;
+        mediaHero?: T | MediaHeroBlockSelect<T>;
+        ctaCentered?: T | CtaCenteredBlockSelect<T>;
       };
   meta?:
     | T
@@ -1189,6 +1459,203 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LogoCloudBlock_select".
+ */
+export interface LogoCloudBlockSelect<T extends boolean = true> {
+  label?: T;
+  logos?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        id?: T;
+      };
+  anchorId?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BenefitsBlock_select".
+ */
+export interface BenefitsBlockSelect<T extends boolean = true> {
+  sectionHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        align?: T;
+      };
+  items?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  image?: T;
+  anchorId?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureSplitBlock_select".
+ */
+export interface FeatureSplitBlockSelect<T extends boolean = true> {
+  sectionHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        align?: T;
+      };
+  items?:
+    | T
+    | {
+        number?: T;
+        text?: T;
+        id?: T;
+      };
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  image?: T;
+  imagePosition?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ComparisonTableBlock_select".
+ */
+export interface ComparisonTableBlockSelect<T extends boolean = true> {
+  sectionHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        align?: T;
+      };
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  columns?:
+    | T
+    | {
+        name?: T;
+        highlighted?: T;
+        features?:
+          | T
+          | {
+              included?: T;
+              label?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  anchorId?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialBlock_select".
+ */
+export interface TestimonialBlockSelect<T extends boolean = true> {
+  image?: T;
+  quote?: T;
+  authorName?: T;
+  authorTitle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProcessStepsBlock_select".
+ */
+export interface ProcessStepsBlockSelect<T extends boolean = true> {
+  headline?: T;
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  steps?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  anchorId?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaHeroBlock_select".
+ */
+export interface MediaHeroBlockSelect<T extends boolean = true> {
+  media?: T;
+  alt?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CtaCenteredBlock_select".
+ */
+export interface CtaCenteredBlockSelect<T extends boolean = true> {
+  sectionHeader?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        description?: T;
+        align?: T;
+      };
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+        fullWidth?: T;
+      };
+  anchorId?: T;
   id?: T;
   blockName?: T;
 }

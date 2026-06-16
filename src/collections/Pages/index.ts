@@ -3,10 +3,18 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
+import { Benefits } from '../../blocks/Benefits/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
+import { ComparisonTable } from '../../blocks/ComparisonTable/config'
 import { Content } from '../../blocks/Content/config'
+import { CtaCentered } from '../../blocks/CtaCentered/config'
+import { FeatureSplit } from '../../blocks/FeatureSplit/config'
 import { FormBlock } from '../../blocks/Form/config'
+import { LogoCloud } from '../../blocks/LogoCloud/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { MediaHero } from '../../blocks/MediaHero/config'
+import { ProcessSteps } from '../../blocks/ProcessSteps/config'
+import { Testimonial } from '../../blocks/Testimonial/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -72,7 +80,21 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [
+                CallToAction,
+                Content,
+                MediaBlock,
+                Archive,
+                FormBlock,
+                LogoCloud,
+                Benefits,
+                FeatureSplit,
+                ComparisonTable,
+                Testimonial,
+                ProcessSteps,
+                MediaHero,
+                CtaCentered,
+              ],
               required: true,
               admin: {
                 initCollapsed: true,

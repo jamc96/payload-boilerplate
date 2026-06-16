@@ -1,45 +1,11 @@
 import { Check, X } from 'lucide-react'
 import React from 'react'
 
-import type { CtaAppearances } from '@/fields/ctaButton'
-import type { Page, Post } from '@/payload-types'
+import type { ComparisonTableBlock as ComparisonTableBlockProps } from '@/payload-types'
 
 import { GlanceButton } from '@/components/GlanceButton'
 import { SectionHeader, type SectionHeaderData } from '@/components/SectionHeader'
 import { cn } from '@/utilities/ui'
-
-type ComparisonFeature = {
-  id?: string | null
-  included?: boolean | null
-  label?: string | null
-}
-
-type ComparisonColumn = {
-  features?: ComparisonFeature[] | null
-  highlighted?: boolean | null
-  id?: string | null
-  name?: string | null
-}
-
-type ComparisonTableCta = {
-  appearance?: CtaAppearances | null
-  fullWidth?: boolean | null
-  label?: string | null
-  newTab?: boolean | null
-  reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
-  } | null
-  type?: 'custom' | 'reference' | null
-  url?: string | null
-}
-
-export type ComparisonTableBlockProps = {
-  anchorId?: string | null
-  columns?: ComparisonColumn[] | null
-  cta?: ComparisonTableCta | null
-  sectionHeader?: SectionHeaderData | null
-}
 
 export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
   anchorId,
@@ -61,17 +27,7 @@ export const ComparisonTableBlock: React.FC<ComparisonTableBlockProps> = ({
         <div className="flex flex-col items-center gap-6 text-center">
           <SectionHeader className="w-full" data={centeredHeader} />
 
-          {cta && (
-            <GlanceButton
-              appearance={cta.appearance}
-              fullWidth={cta.fullWidth}
-              label={cta.label}
-              newTab={cta.newTab}
-              reference={cta.reference}
-              type={cta.type}
-              url={cta.url}
-            />
-          )}
+          <GlanceButton {...cta} />
         </div>
 
         {columns && columns.length > 0 && (

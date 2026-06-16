@@ -1,22 +1,9 @@
 import React from 'react'
 
-import type { Media as MediaType } from '@/payload-types'
+import type { LogoCloudBlock as LogoCloudBlockProps } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
-
-type LogoItem = {
-  alt?: string | null
-  id?: string | null
-  image: MediaType | number | string
-}
-
-export type LogoCloudBlockProps = {
-  anchorId?: string | null
-  blockType?: 'logoCloud'
-  label?: string | null
-  logos?: LogoItem[] | null
-}
 
 type Props = LogoCloudBlockProps & {
   className?: string

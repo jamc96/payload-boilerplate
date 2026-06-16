@@ -1,47 +1,18 @@
 import React from 'react'
 
-import type { SectionHeaderData } from '@/components/SectionHeader'
+import type { FeatureSplitBlock as FeatureSplitBlockProps } from '@/payload-types'
+
 import { GlanceButton } from '@/components/GlanceButton'
 import { Media } from '@/components/Media'
 import { SectionHeader } from '@/components/SectionHeader'
-import type { CtaAppearances } from '@/fields/ctaButton'
-import type { Media as MediaType, Page, Post } from '@/payload-types'
 import { cn } from '@/utilities/ui'
-
-type FeatureSplitItem = {
-  id?: string | null
-  number?: string | null
-  text: string
-}
-
-type FeatureSplitCta = {
-  appearance?: CtaAppearances | null
-  fullWidth?: boolean | null
-  label?: string | null
-  newTab?: boolean | null
-  reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
-  } | null
-  type?: 'custom' | 'reference' | null
-  url?: string | null
-}
-
-export type FeatureSplitBlockProps = {
-  blockType?: 'featureSplit'
-  cta?: FeatureSplitCta | null
-  image: MediaType | string | number
-  imagePosition?: ('left' | 'right') | null
-  items?: FeatureSplitItem[] | null
-  sectionHeader?: SectionHeaderData | null
-}
 
 export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
   cta,
   image,
   imagePosition = 'right',
   items,
-  sectionHeader: sectionHeaderData,
+  sectionHeader,
 }) => {
   const imageOnLeft = imagePosition === 'left'
 
@@ -59,7 +30,7 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
               imageOnLeft && 'lg:order-2',
             )}
           >
-            <SectionHeader data={sectionHeaderData} />
+            <SectionHeader data={sectionHeader} />
 
             {items && items.length > 0 && (
               <ul className="flex flex-col">
@@ -84,7 +55,7 @@ export const FeatureSplitBlock: React.FC<FeatureSplitBlockProps> = ({
               </ul>
             )}
 
-            {cta && <GlanceButton {...cta} />}
+            <GlanceButton {...cta} />
           </div>
 
           {image && (

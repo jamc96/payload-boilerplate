@@ -1,26 +1,11 @@
 import React from 'react'
 
-import type { IconPickerValue } from '@/fields/iconPicker'
-import type { Media as MediaType } from '@/payload-types'
+import type { BenefitsBlock as BenefitsBlockProps } from '@/payload-types'
 
 import { Icon } from '@/components/Icon'
 import { Media } from '@/components/Media'
-import { SectionHeader, type SectionHeaderData } from '@/components/SectionHeader'
+import { SectionHeader } from '@/components/SectionHeader'
 import { cn } from '@/utilities/ui'
-
-type BenefitItem = {
-  description?: string | null
-  icon?: IconPickerValue | null
-  id?: string | null
-  title?: string | null
-}
-
-export type BenefitsBlockProps = {
-  anchorId?: string | null
-  image?: MediaType | number | null
-  items?: BenefitItem[] | null
-  sectionHeader?: SectionHeaderData | null
-}
 
 export const BenefitsBlock: React.FC<BenefitsBlockProps> = ({
   anchorId,

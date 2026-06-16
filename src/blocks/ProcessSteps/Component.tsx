@@ -1,37 +1,9 @@
 import React from 'react'
 
-import type { CtaAppearances } from '@/fields/ctaButton'
-import type { Page, Post } from '@/payload-types'
+import type { ProcessStepsBlock as ProcessStepsBlockProps } from '@/payload-types'
 
 import { GlanceButton } from '@/components/GlanceButton'
 import { cn } from '@/utilities/ui'
-
-type ProcessStepCta = {
-  appearance?: CtaAppearances | null
-  fullWidth?: boolean | null
-  label?: string | null
-  newTab?: boolean | null
-  reference?: {
-    relationTo: 'pages' | 'posts'
-    value: Page | Post | string | number
-  } | null
-  type?: 'custom' | 'reference' | null
-  url?: string | null
-}
-
-type ProcessStepItem = {
-  description?: string | null
-  id?: string | null
-  number?: string | null
-  title?: string | null
-}
-
-export type ProcessStepsBlockProps = {
-  anchorId?: string | null
-  cta?: ProcessStepCta | null
-  headline?: string | null
-  steps?: ProcessStepItem[] | null
-}
 
 const formatStepNumber = (number: string | null | undefined, index: number): string => {
   if (number) {
@@ -61,13 +33,11 @@ export const ProcessStepsBlock: React.FC<ProcessStepsBlockProps> = ({
             </h2>
           )}
 
-          {cta && (
-            <GlanceButton
-              {...cta}
-              appearance={cta.appearance ?? 'secondary'}
-              className="shrink-0"
-            />
-          )}
+          <GlanceButton
+            {...cta}
+            appearance={cta.appearance ?? 'secondary'}
+            className="shrink-0"
+          />
         </div>
 
         {steps && steps.length > 0 && (

@@ -1,15 +1,8 @@
 import React from 'react'
 
-import type { Media as MediaType } from '@/payload-types'
+import type { TestimonialBlock as TestimonialBlockProps } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-
-export type TestimonialBlockProps = {
-  authorName?: string | null
-  authorTitle?: string | null
-  image?: MediaType | number | null
-  quote?: string | null
-}
 
 export const TestimonialBlock: React.FC<TestimonialBlockProps> = ({
   authorName,

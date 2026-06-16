@@ -1,13 +1,8 @@
 import React from 'react'
 
-import type { Media as MediaType } from '@/payload-types'
+import type { MediaHeroBlock as MediaHeroBlockProps } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-
-export type MediaHeroBlockProps = {
-  alt?: string | null
-  media?: MediaType | number | null
-}
 
 export const MediaHeroBlock: React.FC<MediaHeroBlockProps> = ({ alt, media }) => {
   return (
