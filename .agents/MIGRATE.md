@@ -37,7 +37,18 @@ flowchart TB
 
 ## 1. Copy skills (mandatory)
 
-From this repo (or any repo that already has the pack):
+From this repo (recommended — installs **all four** required skills, manifest, `AGENTS.md`, and `MIGRATE.md`):
+
+```bash
+# From payload-figma-boilerplate (this repo)
+pnpm skills:install /path/to/new-project
+pnpm skills:install /path/to/new-project --deps --config   # + npm devDeps + docs/FIGMA_PAYLOAD_PROJECT.md
+
+# Verify in the target project
+pnpm skills:verify /path/to/new-project
+```
+
+Manual copy (same result):
 
 ```bash
 TARGET=/path/to/new-project
@@ -50,7 +61,7 @@ cp -R .agents/skills/playwright-cli     "$TARGET/.agents/skills/"
 cp    .agents/MIGRATE.md                "$TARGET/.agents/" 2>/dev/null || true
 ```
 
-All four skills live under `.agents/skills/` — no paths outside the repo.
+All four skills are **required** — the installer always copies the full set and writes `.agents/skills/manifest.json`.
 
 Paste into target `AGENTS.md` — full snippet in [figma-payload-cms/STACK_SETUP.md](skills/figma-payload-cms/STACK_SETUP.md).
 

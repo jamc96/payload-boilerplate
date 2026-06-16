@@ -12,6 +12,15 @@ Portable agent skill for **Figma MCP → Payload CMS page builds** with phased s
 ### Option A — Copy into the repo (team share via git)
 
 ```bash
+# From payload-figma-boilerplate (installs all four required skills + AGENTS.md)
+pnpm skills:install /path/to/other-project
+pnpm skills:install /path/to/other-project --deps --config
+pnpm skills:verify /path/to/other-project
+```
+
+Manual copy:
+
+```bash
 # From this skill's directory (or a reference repo like payload-figma-boilerplate)
 cp -R .agents/skills/figma-payload-cms /path/to/other-project/.agents/skills/
 cp -R .agents/skills/payload            /path/to/other-project/.agents/skills/

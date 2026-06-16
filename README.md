@@ -41,9 +41,17 @@ Read **`AGENTS.md`** first. Required skills (in `.agents/skills/`):
 
 Per-project config: **`docs/FIGMA_PAYLOAD_PROJECT.md`**
 
+**Install skills into another Payload project (Plan A):**
+
+```bash
+pnpm skills:install /path/to/your-payload-site
+pnpm skills:install /path/to/your-payload-site --deps --config
+pnpm skills:verify /path/to/your-payload-site
+```
+
 | Doc | Purpose |
 |-----|---------|
-| [.agents/MIGRATE.md](.agents/MIGRATE.md) | Copy this repo to a new project |
+| [.agents/MIGRATE.md](.agents/MIGRATE.md) | Copy this repo to a new project (`pnpm skills:install`) |
 | [.agents/skills/figma-payload-cms/STACK_SETUP.md](.agents/skills/figma-payload-cms/STACK_SETUP.md) | Skills, packages, git policy |
 | [docs/LOCAL_IMAGES.md](docs/LOCAL_IMAGES.md) | Why many local images exist; what to commit |
 

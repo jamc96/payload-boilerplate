@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "package": "payload-figma-boilerplate",
+  "required": [
+    "payload",
+    "figma-payload-cms",
+    "playwright",
+    "playwright-cli"
+  ]
+}

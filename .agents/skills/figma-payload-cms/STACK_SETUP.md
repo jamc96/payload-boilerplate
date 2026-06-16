@@ -20,14 +20,22 @@ Agents must load **all four** before Figma → Payload work:
 ### Copy into the target repo
 
 ```bash
-# From a reference repo (e.g. payload-figma-boilerplate)
+# From payload-figma-boilerplate (recommended — all four skills are required)
+pnpm skills:install /path/to/project
+pnpm skills:install /path/to/project --deps --config
+pnpm skills:verify /path/to/project
+```
+
+Manual copy:
+
+```bash
 cp -R .agents/skills/figma-payload-cms  /path/to/project/.agents/skills/
 cp -R .agents/skills/payload            /path/to/project/.agents/skills/
 cp -R .agents/skills/playwright           /path/to/project/.agents/skills/
 cp -R .agents/skills/playwright-cli     /path/to/project/.agents/skills/
 ```
 
-All four skills live under `.agents/skills/` — no user-level or external skill paths required.
+All four skills live under `.agents/skills/` — no user-level or external skill paths required. The installer writes `.agents/skills/manifest.json` listing required skills.
 
 ```bash
 pnpm add -D @playwright/cli @playwright/test
