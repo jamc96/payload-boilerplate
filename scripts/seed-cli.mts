@@ -1,11 +1,10 @@
 /**
- * CLI seed — run with: pnpm seed
+ * CLI seed — run with: pnpm seed or pnpm db:seed
  *
  * After schema field renames or type changes:
  * 1. Stop `pnpm dev` (avoids SQLite lock)
- * 2. Run `pnpm seed:fresh` (recommended) or `pnpm seed`
- * 3. If Drizzle asks about a renamed column, pick "rename" or use seed:fresh
- * 4. Restart dev and reload the admin
+ * 2. Run `pnpm db:reset` (recommended) or `pnpm seed:fresh`
+ * 3. Restart dev and reload the admin
  *
  * Admin login: SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD (see .env.example)
  */

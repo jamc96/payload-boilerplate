@@ -2,8 +2,22 @@ import { defineConfig, devices } from '@playwright/test'
 
 import 'dotenv/config'
 
+const baseURL = 'http://localhost:3000'
+
 /** One worker per viewport project — batch specs use a single navigation per project. */
 const localWorkers = Number(process.env.PLAYWRIGHT_VISUAL_WORKERS ?? 3)
+
+const visualServerEnv = process.env.CI
+  ? {
+      DATABASE_URL: 'file:./.e2e/payload.db',
+      PAYLOAD_SECRET: 'test-secret-minimum-32-characters',
+      NEXT_PUBLIC_SERVER_URL: baseURL,
+      SEED_ADMIN_EMAIL: 'admin@payload-poc.test',
+      SEED_ADMIN_PASSWORD: 'changeme-dev-only',
+      SEED_ADMIN_NAME: 'Admin',
+      SKIP_VISUAL_SEED: '1',
+    }
+  : undefined
 
 export default defineConfig({
   testDir: './tests/visual',
@@ -55,8 +69,17 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm dev',
+    command: process.env.CI
+      ? 'pnpm exec tsx tests/prepare-e2e-db.ts && pnpm build && pnpm start'
+      : 'pnpm dev',
     reuseExistingServer: !process.env.CI,
-    url: 'http://localhost:3000',
+    url: baseURL,
+    timeout: process.env.CI ? 180_000 : undefined,
+    env: visualServerEnv
+      ? {
+          ...process.env,
+          ...visualServerEnv,
+        }
+      : undefined,
   },
 })

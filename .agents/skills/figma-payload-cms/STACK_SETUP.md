@@ -110,7 +110,9 @@ Why so many files on disk? [docs/LOCAL_IMAGES.md](../../docs/LOCAL_IMAGES.md) (i
 
 ```bash
 pnpm figma:refs:check          # local Figma PNG cache (optional until exported)
-pnpm seed:fresh
+pnpm db:setup                  # or pnpm dev on first clone (auto-setup)
 pnpm test:e2e
 pnpm test:visual               # batch specs; baselines stay local
 ```
+
+Database workflow: [docs/database.md](../../docs/database.md) · [docs/payload-migration-workflow-prompt.md](../../docs/payload-migration-workflow-prompt.md)

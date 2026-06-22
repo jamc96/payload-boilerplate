@@ -82,9 +82,10 @@ File: `src/app/(frontend)/globals.css` · Tailwind: `bg-site-*`, `text-site-*`, 
 
 | Command | Purpose |
 |---------|---------|
-| `pnpm dev` | Dev server |
-| `pnpm seed` | Seed CMS + admin from env |
-| `pnpm seed:fresh` | Delete `payload.db` + seed |
+| `pnpm dev` | Dev server (migrate on start) |
+| `pnpm db:setup` | Migrate + seed |
+| `pnpm db:reset` | Wipe DB + migrate + seed |
+| `pnpm seed` / `pnpm seed:fresh` | Alias for `db:seed` / `db:reset` |
 | `pnpm figma:refs:check` | Verify local Figma PNG cache |
 | `pnpm test:e2e` | E2E |
 | `pnpm test:visual` | Visual regression (batch specs) |

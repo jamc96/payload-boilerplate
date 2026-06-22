@@ -20,11 +20,25 @@ git clone https://github.com/YOUR_ORG/payload-figma-boilerplate.git
 cd payload-figma-boilerplate
 cp .env.example .env
 pnpm install
-pnpm seed:fresh
 pnpm dev
 ```
 
+First run auto-creates the local DB (migrate + seed). Or explicitly: `pnpm db:setup && pnpm dev`.
+
 Open [http://localhost:3000](http://localhost:3000) · Admin: `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` (defaults in `.env.example`).
+
+---
+
+## Database
+
+Schema is managed via migrations (`push: false`); baseline content comes from seed. A git pre-commit hook auto-creates migrations when you commit schema changes without one. See [docs/plans/database-collaboration-and-deployment-plan.md](./docs/plans/database-collaboration-and-deployment-plan.md) (rollout plan), [docs/payload-migration-workflow-prompt.md](./docs/payload-migration-workflow-prompt.md) (full data flow), or [docs/database.md](./docs/database.md) (cheat sheet).
+
+### For frontend contributors (plain English)
+
+- Run **`pnpm dev`** — that's it for normal work
+- After pulling changes, **`pnpm dev`** applies any new migrations automatically
+- If the admin looks broken or pages error: **`pnpm db:reset`** then **`pnpm dev`**
+- Never commit `payload.db` or files in `.e2e/`
 
 ---
 
@@ -72,8 +86,10 @@ pnpm skills:verify /path/to/your-payload-site
 
 | Command | Purpose |
 |---------|---------|
-| `pnpm seed` | Seed demo content |
-| `pnpm seed:fresh` | Reset DB + seed |
+| `pnpm dev` | Migrate (or first-time setup), then Next.js |
+| `pnpm db:setup` | Migrate + seed (first clone) |
+| `pnpm db:reset` | Wipe local DB, migrate + seed |
+| `pnpm seed` / `pnpm seed:fresh` | Same as `db:seed` / `db:reset` |
 | `pnpm test:e2e` | Functional tests |
 | `pnpm test:visual` | Visual regression (local baselines) |
 | `pnpm test:visual:live` | Playwright CLI attach for live QA |
@@ -87,7 +103,7 @@ pnpm skills:verify /path/to/your-payload-site
 |------------|-------------------|
 | `public/media/figma/` seed assets | Payload upload derivatives in `public/media/*` |
 | `.agents/`, docs, source | `references/**/*.png` (QA baselines) |
-| | `playwright-report/`, `test-results/`, `payload.db` |
+| | `playwright-report/`, `test-results/`, `*.db`, `.e2e/` |
 
 ---
 
